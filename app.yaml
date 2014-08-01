@@ -1,0 +1,30 @@
+application: vscontentmanager
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: no
+
+libraries:                                                                      
+- name: jinja2                                                                  
+  version: latest
+
+handlers:
+- url: /css
+  static_dir: static/css
+
+- url: /js
+  static_dir: static/js
+
+- url: /img
+  static_dir: static/img
+
+- url: /fonts
+  static_dir: static/fonts
+
+- url: /favicon\.ico
+  static_files: static/favicon.ico
+  upload: favicon\.ico
+
+- url: /.*
+  script: main.app
+
