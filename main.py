@@ -90,7 +90,6 @@ class LoginPage(webapp2.RequestHandler):
         username = self.request.get('user')
         password = self.request.get('password')
         to = self.request.get('to')
-        print username, password, to
 
         result = User.query(User.name == username,
                             User.password == password).fetch(1)
