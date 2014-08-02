@@ -33,42 +33,52 @@
     {% endblock %}
     
     {% block content %}
-    <div class="container" style="margin-top:200px;">
-      <div class="row text-center">
-        <div class="col-md-4">
-          <span class="fa-stack fa-4x">
-	    <a href="/content/home">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-book fa-stack-1x fa-inverse"></i>
-            </a>
-	  </span>
-          <h4 class="service-heading">Contenido</h4>
-          <p class="text-muted">Editar y crear contenido de texto</p>
+    <div class="container" style="margin-top:100px;">
+      <div class="row">
+        <div class="col-md-12" style="margin-bottom:20px;">
+	  <h1>{{ title }}</h1>
+	  {{ text|safe }}
         </div>
-        <div class="col-md-4">
-          <span class="fa-stack fa-4x">
-	    <a href="/media">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-film fa-stack-1x fa-inverse"></i>
-	    </a>
-          </span>
-          <h4 class="service-heading">Multimedia</h4>
-          <p class="text-muted">Subir y administrar material multimedia.</p>
-        </div>
-        <div class="col-md-4">
-          <span class="fa-stack fa-4x">
-	    <a href="/users">
-	      <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-user fa-stack-1x fa-inverse"></i>
-	    </a>
-          </span>
-          <h4 class="service-heading">Usuarios</h4>
-          <p class="text-muted">Gestionar usuarios y permisos.</p>
-        </div>
+	<div class="container">
+	  <div class="well">
+	    <div class="text-center">
+	      <h1>Edit</h1>
+	    </div>
+	    <form action="/content/{{ slug }}" method="post" id="form" role="form">
+	      <input type="text" name="slug" value="{{ slug }}" hidden><br>
+	      <div class="form-group">
+		<label>Title:</label>
+		<input 
+		   type="text" 
+		   name="title"
+		   value="{{ title }}"required>
+	      </div>
+	      <div class="form-group">
+		<label>Subscription:</label>
+		<input 
+		   type="text" 
+		   name="subscription"
+		   value="{{ subscription }}" required>
+		Valid subscriptions:
+		{% for sub in subscriptions %}
+		  {{ sub.name }},
+		{% endfor %}
+ 	      </div>
+	      <textarea name="text" form="form">{{ edit }}</textarea><br>
+	      <input type="submit" value="Submit">
+	    </form>
+	  </div>
+	</div>
       </div>
     </div>
     {% endblock %}
     
     {% block footer %}
+    <script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
+    <script>
+      tinymce.init(
+      {selector:'textarea',
+      plugins:'code'});
+    </script>
     {% endblock %}
     
