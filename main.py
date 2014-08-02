@@ -39,7 +39,7 @@ def process_text(text):
             replacements.append('<i class="fa fa-external-link"></i>')
         else:
             replacements.append('content')
-            replacements.append('<i class="fa fa-edit"></i>')
+            replacements.append('')
 
     newtext = re.sub(r"#(\w+)", '<a href="/{}/\g<1>">{}</a>', text)
     return newtext.format(*replacements)
