@@ -3,6 +3,7 @@ import webapp2
 import jinja2
 import re
 from google.appengine.api import users
+from google.appengine.ext import ndb
 from models import User, Session, Page, Subscription
 
 AUTHORIZED_USERS = ['guillemborrell@gmail.com',
@@ -101,7 +102,7 @@ class AdminPage(webapp2.RequestHandler):
                 {'logout_url':users.create_logout_url('/')}))
 
         else:
-            self.redirect('/admin')
+            self.redirect(users.create_login_url('/admin'))
 
 
 class ContentPage(webapp2.RequestHandler):
@@ -171,8 +172,66 @@ class MediaPage(webapp2.RequestHandler):
 
 
 class UsersPage(webapp2.RequestHandler):
-    def get(self,slug):
-        pass
+    ## This object is non REST rubbish, but I don't care.
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            template_args = {'logout_url': users.create_logout_url('/')}
+            subscription_list = list()
+            more = True
+            curs = None
+            while more:
+                s, curs, more = Subscription.query(
+                ).fetch_page(
+                    10, start_cursor=curs)
+                for sitem in s:
+                    subscription_list.append(sitem)
+
+            template_args['subscriptions'] = subscription_list
+
+            users_list = list()
+            more = True
+            curs = None
+            while more:
+                u, curs, more = User.query(
+                ).order(
+                    -User.when).fetch_page(
+                        10, start_cursor=curs)
+                for uitem in u:
+                    users_list.append(uitem)
+
+            template_args['users'] = users_list
+
+            template = JINJA_ENVIRONMENT.get_template('users.html')
+            self.response.write(template.render(template_args))
+
+        else:
+            self.redirect('/admin')
+
+    def post(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            what = self.request.get('what')
+            action = self.request.get('action')
+
+            if what == 'subscription' and action == 'create':
+                Subscription(name=self.request.get('name')).put()
+                
+            elif what == 'user' and action == 'delete':
+                user = ndb.Key(urlsafe=self.request.get('key'))
+                user.delete()
+
+            elif what == 'user' and action == 'create':
+                User(
+                    name = self.request.get('name'),
+                    password = self.request.get('password'),
+                    subscription = Subscription.query(
+                        Subscription.name == self.request.get(
+                            'subscription')
+                    ).fetch(1)[0].key).put()
+
+
+        self.redirect('/users')
 
 
 class LoginPage(webapp2.RequestHandler):
@@ -239,7 +298,7 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/logout',LogoutPage),
         webapp2.Route(r'/admin',AdminPage),
         webapp2.Route(r'/content/<slug:.*>',ContentPage),
-        webapp2.Route(r'/media/',MediaPage),
-        webapp2.Route(r'/users/',UsersPage),
+        webapp2.Route(r'/media',MediaPage),
+        webapp2.Route(r'/users',UsersPage),
         webapp2.Route(r'/boot',BootPage)
     ], debug = True)

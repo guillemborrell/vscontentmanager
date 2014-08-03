@@ -2,7 +2,8 @@ from google.appengine.ext import ndb
 
 class Subscription(ndb.Model):
     name = ndb.StringProperty()
-    
+    when = ndb.DateTimeProperty(auto_now_add = True)
+
 
 class User(ndb.Model):
     name = ndb.StringProperty()
