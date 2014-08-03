@@ -2,9 +2,12 @@ import os
 import webapp2
 import jinja2
 import re
+import urllib
 from google.appengine.api import users
 from google.appengine.ext import ndb
-from models import User, Session, Page, Subscription
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
+from models import User, Session, Page, Subscription, Media
 
 AUTHORIZED_USERS = ['guillemborrell@gmail.com',
                     'beatriz88rc@gmail.com']
@@ -167,8 +170,54 @@ class ContentPage(webapp2.RequestHandler):
 
 
 class MediaPage(webapp2.RequestHandler):
-    def get(self,slug):
-        pass
+    ## This object is non REST rubbish, but I don't care.
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            upload_url = blobstore.create_upload_url('/upload')
+            template_args = {'logout_url': users.create_logout_url('/')}
+            media_list = list()
+            more = True
+            curs = None
+            while more:
+                m, curs, more = Media.query(
+                ).fetch_page(
+                    10, start_cursor=curs)
+                for mitem in m:
+                    media_list.append(mitem)
+
+            template_args['media'] = media_list
+            template_args['upload_url'] = upload_url
+
+            template = JINJA_ENVIRONMENT.get_template('media.html')
+            self.response.write(template.render(template_args))
+
+        else:
+            self.redirect('/admin')
+
+
+class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            upload_files = self.get_uploads('file')
+            for i,f in enumerate(upload_files):
+                blob_info = f
+                Media(name = self.request.get('name')+'_{}'.format(i),
+                      blob = blob_info.key()).put()
+            
+            self.redirect('/media')
+            
+        else:
+            self.redirect('/media')
+            
+
+class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
+    def get(self, resource):
+        print "here"
+        resource = str(urllib.unquote(resource))
+        blob_info = blobstore.BlobInfo.get(resource)
+        self.send_blob(blob_info)
 
 
 class UsersPage(webapp2.RequestHandler):
@@ -299,6 +348,8 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/admin',AdminPage),
         webapp2.Route(r'/content/<slug:.*>',ContentPage),
         webapp2.Route(r'/media',MediaPage),
+        webapp2.Route(r'/upload',UploadHandler),
+        webapp2.Route(r'/serve/<resource:.*>',ServeHandler),
         webapp2.Route(r'/users',UsersPage),
         webapp2.Route(r'/boot',BootPage)
     ], debug = True)

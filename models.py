@@ -1,4 +1,4 @@
-from google.appengine.ext import ndb
+from google.appengine.ext import ndb, blobstore
 
 class Subscription(ndb.Model):
     name = ndb.StringProperty()
@@ -24,3 +24,9 @@ class Page(ndb.Model):
     when = ndb.DateTimeProperty(auto_now_add = True)
     author = ndb.UserProperty()
     allowed = ndb.KeyProperty(kind=Subscription)
+
+
+class Media(ndb.Model):
+    name = ndb.StringProperty()
+    blob = ndb.BlobKeyProperty()
+    when = ndb.DateTimeProperty(auto_now_add = True)
