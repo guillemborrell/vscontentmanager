@@ -12,7 +12,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/" class="navbar-brand">Protocol Services</a>
+          <a href="/content/home" class="navbar-brand">Comm. Protocol Services</a>
 	</div>
 	
 	<!-- Collect the nav links, forms, and other content for toggling -->
@@ -36,36 +36,36 @@
     <div class="container" style="margin-top:100px;">
       <div class="row">
         <div class="col-md-12" style="margin-bottom:20px;">
-	  <h1>{{ title }}</h1>
+	  <h2>{{ title }}</h2>
 	  {{ text|safe }}
         </div>
 	<div class="container">
 	  <div class="well">
 	    <div class="text-center">
-	      <h1>Edit</h1>
+	      <h1>Editar</h1>
 	    </div>
 	    <form action="/content/{{ slug }}" method="post" id="form" role="form">
 	      <input type="text" name="slug" value="{{ slug }}" hidden><br>
 	      <div class="form-group">
-		<label>Title:</label>
+		<label>Título:</label>
 		<input 
 		   type="text" 
 		   name="title"
 		   value="{{ title }}"required>
 	      </div>
 	      <div class="form-group">
-		<label>Subscription:</label>
+		<label>Suscripción:</label>
 		<input 
 		   type="text" 
 		   name="subscription"
 		   value="{{ subscription }}" required>
-		Valid subscriptions:
+		Válidas:
 		{% for sub in subscriptions %}
 		  {{ sub.name }},
 		{% endfor %}
  	      </div>
 	      <textarea name="text" form="form">{{ edit }}</textarea><br>
-	      <input type="submit" value="Submit">
+	      <input type="submit" value="Aceptar">
 	    </form>
 	  </div>
 	</div>

@@ -5,7 +5,8 @@ import re
 from google.appengine.api import users
 from models import User, Session, Page, Subscription
 
-AUTHORIZED_USERS = ['guillemborrell@gmail.com']
+AUTHORIZED_USERS = ['guillemborrell@gmail.com',
+                    'beatriz88rc@gmail.com']
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
