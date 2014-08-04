@@ -7,7 +7,7 @@ from google.appengine.api import users
 from google.appengine.ext import ndb
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
-from models import User, Session, Page, Subscription, Media
+from models import User, Session, Page, Subscription, Media, Message
 
 AUTHORIZED_USERS = ['guillemborrell@gmail.com',
                     'beatriz88rc@gmail.com']
@@ -72,6 +72,12 @@ class MainPage(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render({}))
 
+    def post(self):
+        Message(name = self.request.get('name'),
+                email = self.request.get('email'),
+                phone = self.request.get('phone'),
+                message = self.request.get('message')).put()
+
 
 class AppPage(webapp2.RequestHandler):
     def get(self,slug):
@@ -100,9 +106,22 @@ class AdminPage(webapp2.RequestHandler):
     def get(self):
         user, logout = check_user(users.get_current_user())
         if user:
+            message_list = list()
+            more = True
+            curs = None
+            while more:
+                m, curs, more = Message.query(
+                ).order(
+                    -Message.when).fetch_page(
+                        10, start_cursor=curs)
+                for mitem in m:
+                    message_list.append(mitem)
+
+
             template = JINJA_ENVIRONMENT.get_template('admin.html')
             self.response.write(template.render(
-                {'logout_url':users.create_logout_url('/')}))
+                {'logout_url':users.create_logout_url('/'),
+                 'messages': message_list}))
 
         else:
             self.redirect(users.create_login_url('/admin'))
@@ -181,8 +200,9 @@ class MediaPage(webapp2.RequestHandler):
             curs = None
             while more:
                 m, curs, more = Media.query(
-                ).fetch_page(
-                    10, start_cursor=curs)
+                ).order(
+                    -Media.when).fetch_page(
+                        10, start_cursor=curs)
                 for mitem in m:
                     media_list.append(mitem)
 

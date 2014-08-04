@@ -66,6 +66,30 @@
           <p class="text-muted">Gestionar usuarios y permisos.</p>
         </div>
       </div>
+
+        <div class="col-md-12" style="margin-bottom:20px;">
+	  <h2>Mensajes</h2>
+	  <table class="table table-striped table-bordered">
+	    <tr>
+	      <th>Nombre</th>
+	      <th>Fecha</th>
+	      <th>Correo</th>
+	      <th>Teléfono</th>
+	      <th>Mensaje</th>
+	    </tr>
+	    {% for m in messages %}
+	    <tr>
+	      <td>{{ m.name }}</td>
+	      <td>{{ m.when.strftime('%d-%m-%Y') }}</td>
+	      <td><a href="mailto:{{ m.email }}?Subject=Mensaje en Comm. Protocol Services" target="_top">
+		  {{ m.email }}</td>
+	      <td>{{ m.phone }}</td>
+	      <td>{{ m.message }}</td>
+	    </tr>
+	    {% endfor %}
+	  </table>
+	</div>
+
     </div>
     {% endblock %}
     

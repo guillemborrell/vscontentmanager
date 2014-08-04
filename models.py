@@ -30,3 +30,11 @@ class Media(ndb.Model):
     name = ndb.StringProperty()
     blob = ndb.BlobKeyProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
+
+
+class Message(ndb.Model):
+    name = ndb.StringProperty()
+    email = ndb.StringProperty()
+    phone = ndb.StringProperty()
+    message = ndb.TextProperty()
+    when = ndb.DateTimeProperty(auto_now_add = True)
