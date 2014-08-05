@@ -84,14 +84,17 @@ class AppPage(webapp2.RequestHandler):
     def get(self,slug):
         cookie = self.request.cookies.get('CookieProtocolServices')
         if cookie:
-            page = Page.query(Page.slug == slug).fetch(1)
+            print cookie
+            session = ndb.Key(urlsafe=str(cookie)).get()
+            user = session.key.parent().get()
+            page = Page.query(Page.slug == slug).get()
             if page:
                 #TODO: Manage subscriptions
-                page = page[0]
                 template = JINJA_ENVIRONMENT.get_template('app.html')
                 self.response.write(template.render(
                     {'auth': True,
                      'page': page,
+                     'user': user,
                      'text': process_text(page.text)}))
             
             else:
@@ -318,20 +321,21 @@ class LoginPage(webapp2.RequestHandler):
         password = self.request.get('password')
         to = self.request.get('to')
 
-        result = User.query(User.name == username,
-                            User.password == password).fetch(1)
+        user = User.query(User.name == username,
+                          User.password == password).get()
 
-        if result:
-            user = result[0]
+        if user:
             session = Session(parent = user.key,
                               data = {})
             template = JINJA_ENVIRONMENT.get_template('app.html')
+            session.put()
+
+            print session.key.id()
             self.response.set_cookie(
                 'CookieProtocolServices',
                 session.key.urlsafe(),
                 max_age=32000)
-                 
-            session.put()                    
+
             self.redirect('/app/{}'.format(to))
             
 

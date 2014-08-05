@@ -78,3 +78,30 @@ if ( typeof define === 'function' && define.amd ) {
 }
 
 })( window );
+
+
+function shareTwitter (url, title) {
+    window.open(
+	"https://twitter.com/share?url="+encodeURIComponent(url)+"&text="+encodeURIComponent("CPS: "+ title),
+	"Compartir con Twitter",
+	"width=600,height=400"
+    );
+};
+
+function shareFacebook (url){
+    window.open(
+	"https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(url),
+	"Compartir con Facebook",
+	"width=600,height=400"
+    );
+}
+
+
+function shareGooglePlus (url, title) {
+    window.open(
+	"https://plus.google.com/share?url="+encodeURIComponent(url)+"&text="+encodeURIComponent(
+	    "Blog de Guillem Borrell: "+ title),
+	"Compartir con Twitter",
+	"width=600,height=400"
+    );
+}

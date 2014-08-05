@@ -58,6 +58,12 @@
 	      <a href="/app/home">Índice</a>
             </li>
             <li>
+	      <a href="/user?id={{ user.key.urlsafe() }}">
+		<i class="fa fa-user"></i>
+		{{ user.name }}
+	      </a>
+            </li>	    
+            <li>
 	      <a href="/logout">Salir</a>
             </li>
           </ul>

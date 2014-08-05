@@ -78,34 +78,44 @@
 	      <i class="fa fa-circle"></i>
 	      <i class="fa fa-circle"></i>
 
-	      <p>
-	      <a href="#">
-		<span class="fa-stack fa-2x">
-		  <i class="fa fa-circle fa-stack-2x text-primary"></i>
-		  <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-		</span>
-	      </a>
-	      <a href="#">
-		<span class="fa-stack fa-2x">
-		  <i class="fa fa-circle fa-stack-2x text-primary"></i>
-		  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-		</span>
-	      </a>
-	      <a href="#">
-		<span class="fa-stack fa-2x">
-		  <i class="fa fa-circle fa-stack-2x text-primary"></i>
-		  <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-		</span>
-	      </a>
-	      <a href="#">
-		<span class="fa-stack fa-2x">
-		  <i class="fa fa-circle fa-stack-2x text-primary"></i>
-		  <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
-		</span>
-	      </a>
-	      </p>
+	      <ul class="list-inline share-buttons">
+		<li>
+		  <a href="#"
+		     onclick="shareTwitter('http://vscontentmanager.appspot.com/blog?id={{ page.slug }}','{{ page.title }}')">
+		    <span class="fa-stack fa-2x">
+		      <i class="fa fa-circle-thin fa-stack-2x text-primary"></i>
+		      <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+		    </span>
+		  </a>
+		</li>
+		<li>
+		  <a href="#">
+		    <span class="fa-stack fa-2x">
+		      <i class="fa fa-circle-thin fa-stack-2x text-primary"></i>
+		      <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+		    </span>
+		  </a>
+		</li>
+		<li>
+		  <a href="#">
+		    <span class="fa-stack fa-2x">
+		      <i class="fa fa-circle-thin fa-stack-2x text-primary"></i>
+		      <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+		    </span>
+		  </a>
+		</li>
+		<li>
+		  <a href="#">
+		    <span class="fa-stack fa-2x">
+		      <i class="fa fa-circle-thin fa-stack-2x text-primary"></i>
+		      <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+		    </span>
+		  </a>
+		</li>
+	      </ul>
+
 	    </div>
-	    <div class="well">
+	    <div class="well" style="margin-bottom:100px;">
 	      Por: {{ page.author }}, en: {{ page.when.strftime('%d-%m-%Y')  }}
 	    </div>
 	    {% endfor %}

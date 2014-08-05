@@ -736,6 +736,22 @@ footer ul.quicklinks {
     line-height: 40px;
 }
 
+ul.share-buttons {
+    margin-bottom: 20px;
+    margin-top: 5px;
+}
+
+ul.share-buttons i {
+    color: black;
+}
+
+ul.share-buttons i:hover,
+ul.share-buttons i:focus,
+ul.share-buttons i:active {
+    color: #fed136;
+}
+
+
 ul.social-buttons {
     margin-bottom: 0;
 }
