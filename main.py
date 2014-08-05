@@ -10,7 +10,8 @@ from google.appengine.ext.webapp import blobstore_handlers
 from models import User, Session, Page, Subscription, Media, Message
 
 AUTHORIZED_USERS = ['guillemborrell@gmail.com',
-                    'beatriz88rc@gmail.com']
+                    'beatriz88rc@gmail.com',
+                    'c.protocolservices@gmail.com']
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -139,7 +140,8 @@ class ContentPage(webapp2.RequestHandler):
                 template_args['title'] = page.title
                 template_args['text'] = process_text_admin(page.text)
                 template_args['edit'] = page.text
-                template_args['subscription'] = page.allowed.get().name
+                template_args['subscription'] = Subscription.query(
+                    Subscription.level == page.allowed).get().name
                 template_args['subscriptions'] = Subscription.query().fetch(10)
                 template_args['slug'] = page.slug
                 template_args['author'] = user.nickname()
@@ -165,12 +167,12 @@ class ContentPage(webapp2.RequestHandler):
         if page:
             subscription = Subscription.query(
                 Subscription.name == self.request.get('subscription')
-            ).fetch(1)
+            ).get()
             page = page[0].key.get()
             page.slug = slug
             page.title = self.request.get('title')
             page.text = self.request.get('text')
-            page.allowed = subscription[0].key
+            page.allowed = subscription.level
             page.put()
 
             self.redirect('/content/{}'.format(slug))
@@ -178,11 +180,12 @@ class ContentPage(webapp2.RequestHandler):
         else:
             subscription = Subscription.query(
                 Subscription.name == self.request.get('subscription')
-            ).fetch(1)
+            ).get()
             page = Page(title = self.request.get('title'),
                         slug = slug,
+                        author = users.get_current_user(),
                         text = self.request.get('text'),
-                        allowed = subscription[0].key)
+                        allowed = subscription.level)
             page.put()
         
             self.redirect('/content/{}'.format(slug))
@@ -284,7 +287,9 @@ class UsersPage(webapp2.RequestHandler):
             action = self.request.get('action')
 
             if what == 'subscription' and action == 'create':
-                Subscription(name=self.request.get('name')).put()
+                Subscription(name=self.request.get('name'),
+                             level=int(self.request.get('level'))
+                         ).put()
                 
             elif what == 'user' and action == 'delete':
                 user = ndb.Key(urlsafe=self.request.get('key'))
@@ -294,10 +299,8 @@ class UsersPage(webapp2.RequestHandler):
                 User(
                     name = self.request.get('name'),
                     password = self.request.get('password'),
-                    subscription = Subscription.query(
-                        Subscription.name == self.request.get(
-                            'subscription')
-                    ).fetch(1)[0].key).put()
+                    subscription = int(self.request.get('subscription'))
+                ).put()
 
 
         self.redirect('/users')
@@ -342,19 +345,38 @@ class LogoutPage(webapp2.RequestHandler):
         self.redirect('/')
 
 
+class BlogPage(webapp2.RequestHandler):
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template('blog.html')
+        if self.request.get('id'):
+            pages = Page.query(Page.allowed == 0,
+                               Page.slug == self.request.get('id')).fetch(1)
+        else:
+            pages = Page.query(Page.allowed == 0).order(-Page.when).fetch(10)
+            
+        self.response.write(
+            template.render({'pages':pages})
+        )
+
+
 class BootPage(webapp2.RequestHandler):
     def get(self):
-        subscription = Subscription(name='standard')
+        public = Subscription(name='public',
+                              level=0)
+        public.put()
+
+        subscription = Subscription(name='standard',
+                                    level=1)
         subscription.put()
 
         User(name='test',
              password='test',
-             subscription=subscription.key).put()
+             subscription=subscription.level).put()
  
         Page(title='Home',
              slug ='home',
              text ='Lorem ipsum...',
-             allowed = subscription.key,
+             allowed = subscription.level,
              author = users.User('none@none.com')).put()
 
         self.redirect('/')
@@ -371,5 +393,6 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/upload',UploadHandler),
         webapp2.Route(r'/serve/<resource:.*>',ServeHandler),
         webapp2.Route(r'/users',UsersPage),
+        webapp2.Route(r'/blog',BlogPage),
         webapp2.Route(r'/boot',BootPage)
     ], debug = True)

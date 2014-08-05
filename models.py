@@ -2,6 +2,7 @@ from google.appengine.ext import ndb, blobstore
 
 class Subscription(ndb.Model):
     name = ndb.StringProperty()
+    level = ndb.IntegerProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
 
 
@@ -9,7 +10,7 @@ class User(ndb.Model):
     name = ndb.StringProperty()
     password = ndb.StringProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
-    subscription = ndb.KeyProperty(kind=Subscription)
+    subscription = ndb.IntegerProperty()
 
 
 class Session(ndb.Model):
@@ -23,7 +24,7 @@ class Page(ndb.Model):
     text = ndb.TextProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
     author = ndb.UserProperty()
-    allowed = ndb.KeyProperty(kind=Subscription)
+    allowed = ndb.IntegerProperty()
 
 
 class Media(ndb.Model):
