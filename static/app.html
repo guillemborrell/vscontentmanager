@@ -79,6 +79,16 @@
       <div class="container">
 	<div class="row">
           <div class="col-lg-12">
+	    {% if activities %}
+	    <div class="well">
+	      <h2>Actividades</h2>
+	      <ul>
+	      {% for activity in activities %}
+	      <li><a href="#">{{ activity.title }}</a></li>
+	      {% endfor %}
+	      </ul>
+	    </div>
+	    {% endif %}
 	    <div class="text-center">
               <h2>{{ page.title }}</h2>
 	    </div>

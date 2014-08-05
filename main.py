@@ -84,10 +84,10 @@ class AppPage(webapp2.RequestHandler):
     def get(self,slug):
         cookie = self.request.cookies.get('CookieProtocolServices')
         if cookie:
-            print cookie
             session = ndb.Key(urlsafe=str(cookie)).get()
             user = session.key.parent().get()
             page = Page.query(Page.slug == slug).get()
+            activities = []
             if page:
                 #TODO: Manage subscriptions
                 template = JINJA_ENVIRONMENT.get_template('app.html')
@@ -95,6 +95,7 @@ class AppPage(webapp2.RequestHandler):
                     {'auth': True,
                      'page': page,
                      'user': user,
+                     'activities': activities,
                      'text': process_text(page.text)}))
             
             else:
@@ -240,7 +241,6 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
 
 class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self, resource):
-        print "here"
         resource = str(urllib.unquote(resource))
         blob_info = blobstore.BlobInfo.get(resource)
         self.send_blob(blob_info)
@@ -330,7 +330,6 @@ class LoginPage(webapp2.RequestHandler):
             template = JINJA_ENVIRONMENT.get_template('app.html')
             session.put()
 
-            print session.key.id()
             self.response.set_cookie(
                 'CookieProtocolServices',
                 session.key.urlsafe(),
