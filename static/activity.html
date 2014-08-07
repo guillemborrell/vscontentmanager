@@ -44,17 +44,24 @@
 	      <th>Creado en</th>
 	      <th>Acciones</th>
 	    </tr>
-	    {% for t in tasks %}
-	    <tr>
+	    {% raw %}
+	    <tr ng-repeat="t in tasks">
 	      <td>{{ t.name }}</td>
 	      <td>{{ t.kind }}</td>
-	      <td>{{ t.when.strftime('%d-%m-%Y') }}</td>
+	      <td>{{ t.when }}</td>
 	      <td>
-		<a href="/assignment?task={{ t.key.urlsafe() }}">
-		  <button class="btn btn-success">Asignar tarea</button>
+		<button class="btn btn-danger"
+			ng-click="deletetask(t.id)">
+		  Borrar
+		</button>
+	      <td>
+		<button class="btn btn-success"
+			ng-click="assigntask(t.id)">
+		  Asignar tarea
+		</button>
 	      </td>
 	    </tr>
-	    {% endfor %}
+	    {% endraw %}
 	  </table>
 	  <a href="/task"><button class="btn btn-success">Crear ejercicio
 	  </button></a>

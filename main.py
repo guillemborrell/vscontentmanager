@@ -394,7 +394,7 @@ class TaskPage(webapp2.RequestHandler):
             self.redirect('/admin')
 
 
-class AssignmentPage(webapp2.RequestHandler):
+class AssignPage(webapp2.RequestHandler):
     def get(self):
         user, logout = check_user(users.get_current_user())
         if user:
@@ -402,7 +402,7 @@ class AssignmentPage(webapp2.RequestHandler):
                 'logout_url': users.create_logout_url('/')
             }
             
-            template = JINJA_ENVIRONMENT.get_template('assignment.html')
+            template = JINJA_ENVIRONMENT.get_template('assign.html')
             self.response.write(
                 template.render(template_args)
             )
@@ -425,7 +425,7 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/serve/<resource:.*>',ServeHandler),
         webapp2.Route(r'/users',UsersPage),
         webapp2.Route(r'/activity',ActivityPage),
-        webapp2.Route(r'/assignment',AssignmentPage),
+        webapp2.Route(r'/assign',AssignPage),
         webapp2.Route(r'/blog',BlogPage),
         webapp2.Route(r'/boot',BootPage),
         webapp2.Route(r'/task',TaskPage),

@@ -21,3 +21,9 @@ indexes:
   - name: allowed
   - name: when
     direction: desc
+
+- kind: Task
+  properties:
+  - name: active
+  - name: when
+    direction: desc

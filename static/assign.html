@@ -76,19 +76,20 @@
     {% endblock %}
     
     {% block content %}
-    {% raw %}
     <section id="services">
-      <div class="container" ng-controller="createTask">
+      <div class="container" ng-controller="assignController">
 	<div class="row">
           <div class="col-lg-12">
 	    <h2>Asignar tarea</h2>
-	    <form>
-	    </form>
+	    {% raw %}
+	    {{ task }}
+	    
+	    {% endraw %}
 	  </div>
 	</div>
       </div>
     </section>
-    {% endraw %}
+
     {% endblock %}
 
     {% block footer %}

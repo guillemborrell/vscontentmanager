@@ -1,5 +1,13 @@
 var taskApp = angular.module('taskApp', ['ngResource']);
 
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+
 taskApp.controller('userController', function($scope, $resource){
     $scope.userresource = $resource('/REST/user');
     $scope.subscriptionresource = $resource('/REST/subscription');
@@ -19,15 +27,13 @@ taskApp.controller('userController', function($scope, $resource){
 	for (i in datag.data){
 	    $scope.groups.push(datag.data[i]);
 	}
-    });
-    
+    });    
 
     var datas = $scope.subscriptionresource.get(function(){
 	for (i in datas.data){
 	    $scope.subscriptions.push(datas.data[i]);
 	}
     });
-
 						   
     var datau = $scope.userresource.get(function(){
 	for (i in datau.data){
@@ -78,8 +84,28 @@ taskApp.controller('userController', function($scope, $resource){
 }
 		  );
 
+taskApp.controller('assignController', function($scope, $resource) {
+    $scope.task = getParameterByName('id');
+    
+}
+		  );
+
 taskApp.controller('activityController', function($scope, $resource) {
-    $scope.taskresource = $resource("/task");
+    $scope.taskresource = $resource("/REST/task");
+    $scope.groupresource = $resource("/REST/group");
+    $scope.tasks = [];
+
+    var datat = $scope.taskresource.get(function(){
+	for (i in datat.data){
+	    $scope.tasks.push(datat.data[i]);
+	}
+    });
+
+    var datag = $scope.groupresource.get(function(){
+	for (i in datag.data){
+	    $scope.groups.push(datag.data[i]);
+	}
+    });
 
     $scope.deletetask = function(task){
 	var ask = confirm("¿Seguro que quieres borrar esta tarea?");
@@ -88,6 +114,11 @@ taskApp.controller('activityController', function($scope, $resource) {
 	    window.location.replace('/activity');
 	}
     }
+
+    $scope.assigntask = function(task){
+	window.location.replace('/assign?id='+task);
+    };
+	
 });
 
 taskApp.controller('createTask', function ($scope, $resource) {
@@ -117,7 +148,7 @@ taskApp.controller('createTask', function ($scope, $resource) {
     $scope.remove_choice_from_question = function(choices){
 	choices.pop();
     }
-    $scope.taskresource = $resource("/task");
+    $scope.taskresource = $resource("/REST/task");
 
     $scope.submit_question = function (){
 	var data = $scope.taskresource.save(

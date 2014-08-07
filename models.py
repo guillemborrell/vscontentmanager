@@ -94,7 +94,7 @@ class Task(ndb.Model):
     kind = ndb.StringProperty()
     data = ndb.JsonProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
-    active = ndb.BooleanProperty
+    active = ndb.BooleanProperty()
 
     def to_dict(self):
         return {"id": self.key.urlsafe(),

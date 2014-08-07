@@ -125,28 +125,23 @@ class TaskResource(webapp2.RequestHandler):
         if user:
             if self.request.get('id'):
                 u = [ndb.Key(urlsafe=self.request.get('id')).get()]
-                data = json.dumps([u.to_dict()])
                 
-            elif self.request.get('page'):
-                if self.request.get('page') == 'all':
-                    curs = None
-                else:
-                    curs = Cursor(urlsafe=self.request.get('page'))
-                    
+            else:
+                cursor = None
                 u = []
                 more = True
 
                 while more:
-                    d, curs, more = Task.query().order(-Task.when).fetch_page(10, start_cursor=cursor)
+                    d, cursor, more = Task.query(
+                        Task.active == True).order(
+                            -Task.when).fetch_page(
+                                10, start_cursor=cursor)
                     for ditem in d:
-                        u.apppend(ditem)
+                        u.append(ditem.to_dict())
                         
-            else:
-                data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(json.dumps({'data':data}))
-
+            self.response.out.write(json.dumps({'data':u}))
 
 
     def post(self):
@@ -155,15 +150,18 @@ class TaskResource(webapp2.RequestHandler):
             body = json.loads(self.request.body)
             Task(name = body['name'],
                  kind = body['kind'],
+                 active = True,
                  data = body['data']).put()
 
-
+            
+    @ndb.transactional
     def delete(self):
         user, logout = check_user(users.get_current_user())
         if user:
             key = self.request.get('id')
-            task = ndb.Key(urlsafe=key)
-            task.delete()
+            task = ndb.Key(urlsafe=key).get()
+            task.active = False
+            task.put()
 
 
 class AssignmentResource(webapp2.RequestHandler):
@@ -171,28 +169,27 @@ class AssignmentResource(webapp2.RequestHandler):
         user, logout = check_user(users.get_current_user())
         if user:
             if self.request.get('id'):
-                u = [ndb.Key(urlsafe=self.request.get('id')).get()]
-                data = json.dumps([u.to_dict()])
+                t = ndb.Key(urlsafe=self.request.get('id')).get()
+                u = [t.to_dict()]
+                t.revised = True
+                t.put()
                 
-            elif self.request.get('page'):
-                if self.request.get('page') == 'all':
-                    curs = None
-                else:
-                    curs = Cursor(urlsafe=self.request.get('page'))
-                    
+            else:
+                cursor
                 u = []
                 more = True
 
                 while more:
-                    d, curs, more = Assignment.query().order(-Assignment.when).fetch_page(10, start_cursor=cursor)
+                    d, curs, more = Assignment.query(
+                        Assignment.active == True).order(
+                            -Assignment.when).fetch_page(
+                                10, start_cursor=cursor)
                     for ditem in d:
-                        u.apppend(ditem)
+                        u.append(ditem.to_dict())
                         
-            else:
-                data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(json.dumps({'data':data}))
+            self.response.out.write(json.dumps({'data':u}))
 
 
 
