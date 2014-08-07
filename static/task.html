@@ -84,7 +84,9 @@
 	    <h2>Nuevo ejercicio</h2>
 	    <form>
 	      <div class="form-group">
-		<select ng-model="type" ng-options="task for task in available_tasks" class="form-control">
+		<select ng-model="type"
+			ng-options="task for task in available_tasks"
+			class="form-control">
 		  <option value="">Seleccione tipo de ejercicio</option>
 		</select>
 	      </div>
@@ -95,31 +97,39 @@
 	      <h3>Crear test</h3>
 	      <form>
 		<div class="form-group">
-		  <label>Nombre</label>
-		  <input type="text" ng-model="test.name">
+		  <label>Nombre (menos de 500 caracteres)</label>
+		  <input type="text"
+			 ng-model="test.name"
+			 class="form-control">
 		</div>
 		<div style="margin-left:20px;" class="well"
 		     ng-repeat="item in test.question_list track by $index">
 		  <div class="form-group">
 		    <label>Enunciado (Menos de 500 caracteres)</label>
-		    <input type="text" ng-model="item.question">
+		    <input type="text"
+			   ng-model="item.question"
+			   class="form-control">
 		  </div>
-		  <ol style="margin-left:20px;">
-		    <li ng-repeat="choice in item.choices track by $index">
-		      <input type="text"
-			     ng-model="choice"></li>
-		    <button class="btn btn-info"
-			    ng-click="add_choice_to_question(item.choices)">
-		      Añadir opción
-		    </button>
-		    <button class="btn bgn-danger"
-			    ng-click="remove_choice_from_question(item.choices)">
-		      Quitar opción
-		    </button>
-		  </ol>
+		  <div class="form-group"
+		       ng-repeat="choice in item.choices track by $index">
+		    <label>{{ $index+1 + '.-' }}</label>
+		    <input type="text"
+			   ng-model="choice"
+			   class="form-control">
+		  </div>
+		  <button class="btn btn-info"
+			  ng-click="add_choice_to_question(item.choices)">
+		    Añadir opción
+		  </button>
+		  <button class="btn bgn-danger"
+			  ng-click="remove_choice_from_question(item.choices)">
+		    Quitar opción
+		  </button>
 		  <div class="form-group">
 		    <label>Correcto</label>
-		    <input type="number" ng-model="item.right">
+		    <input type="number"
+			   ng-model="item.right"
+			   class="form-control">
 		  </div>
 		</div>
 		<div style="margin-left:20px;">
@@ -144,11 +154,11 @@
 		  <label for="name">Nombre</label>
 		  <input type="text"
 			 ng-model="activity.name"
-			 id="name">
+			 class="form-control">
 		</div>
 		<div class="form-group">
-		  <label for="name">Descripción</label>
-		  <textarea>{{ activity.description }}</textarea>
+		  <label for="name">Descripción (HTML válido)</label>
+		  <textarea rows="5" class="form-control">{{ activity.description }}</textarea>
 		</div>
 		<button class="btn btn-success" ng-click="submit_activity()">
 		  Crear Actividad
@@ -161,21 +171,25 @@
 	      <h3>Crear pregunta</h3>
 	      <form role="form">
 		<div class="form-group">
-		  <label for="name">Nombre</label>
+		  <label for="name">Nombre (menos de 500 caracteres)</label>
 		  <input type="text"
-			 ng-model="question.name" id="name">
+			 ng-model="question.name"
+			 class="form-control">
 		</div>
 		<div class="form-group">
 		  <label for="name">Pregunta (menos de 500 caracteres)</label>
 		  <input type="text"
-			 ng-model="question.question" id="name">
+			 ng-model="question.question" 
+			 class="form-control">
 		</div>
 		<div class="form-group">
 		  <label for="name">Respuesta (menos de 500 caracteres)</label>
 		  <input type="text"
-			 ng-model="question.answer" id="name">
+			 ng-model="question.answer"
+			 class="form-control">
 		</div>
-		<button class="btn btn-success" ng-click="submit_question()">
+		<button class="btn btn-success"
+			ng-click="submit_question()">
 		  Crear Pregunta
 		</button>
 	      </form>

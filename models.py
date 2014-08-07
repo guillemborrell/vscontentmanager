@@ -115,6 +115,7 @@ class Assignment(ndb.Model):
     result = ndb.JsonProperty()
     completed = ndb.BooleanProperty()
     revised = ndb.BooleanProperty()
+    active = ndb.BooleanProperty()
 
     def to_dict(self):
         return {"id": self.key.urlsafe(),
@@ -125,4 +126,5 @@ class Assignment(ndb.Model):
                 "start": self.start.strftime("%b %d %Y %H:%M:%S"),
                 "due": self.due.strftime("%b %d %Y %H:%M:%S"),
                 "completed": self.completed,
+                "active": self.active,
                 "revised": self.revised}

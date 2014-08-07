@@ -101,7 +101,7 @@ taskApp.controller('createTask', function ($scope, $resource) {
     $scope.test = {"name": "",
 		   "question_list": [{"question": "",
 				      "choices": ["1", "2", "3", "4"],
-				      "right": 0}
+				      "right": 1}
 				    ]
 		  };
     $scope.error = false;
