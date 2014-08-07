@@ -30,7 +30,7 @@ class UserResource(webapp2.RequestHandler):
                         u.apppend(ditem)
                         
             else:
-            data = []
+                data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.out.write(data)
@@ -79,7 +79,7 @@ class SubscriptionResource(webapp2.RequestHandler):
                         u.apppend(ditem)
                         
             else:
-            data = []
+                data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.out.write(data)
@@ -125,7 +125,7 @@ class GroupResource(webapp2.RequestHandler):
                         u.apppend(ditem)
                         
             else:
-            data = []
+                data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.out.write(data)
@@ -170,7 +170,7 @@ class TaskResource(webapp2.RequestHandler):
                         u.apppend(ditem)
                         
             else:
-            data = []
+                data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.out.write(data)
@@ -217,7 +217,7 @@ class AssignmentResource(webapp2.RequestHandler):
                         u.apppend(ditem)
                         
             else:
-            data = []
+                data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.out.write(data)
