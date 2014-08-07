@@ -10,6 +10,12 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Group
+  properties:
+  - name: active
+  - name: when
+    direction: desc
+
 - kind: Page
   properties:
   - name: allowed

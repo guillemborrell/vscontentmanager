@@ -33,7 +33,9 @@
     {% endblock %}
     
     {% block content %}
-    <div class="container" style="margin-top:100px;">
+    <div class="container"
+	 style="margin-top:100px;"
+	 ng-controller="userController">
       <div class="row">
         <div class="col-md-12" style="margin-bottom:20px;">
 	  <h2>Suscripciones</h2>
@@ -50,94 +52,122 @@
 	    {% endfor %}
 	    <tr>
 	      <td>
-		<form action="/users" method="post">
-		  <input type="text"
-			 name="what"
-			 value="subscription"
-			 hidden>
-		  <input type="text"
-			 name="action"
-			 value="create"
-			 hidden>
-		  <input type="text"
-			 name="name"
-			 placeholder="Tipo">
+		<input type="text"
+		       name="name"
+		       class="form-control"
+		       ng-model="newsubscriptionname"
+		       placeholder="Nombre">
 	      </td>
 	      <td>
-		  <input type="number"
-			 name="level"
-			 placeholder="Nivel">
-		  <input type="submit" value="Crear">
-		</form>
+		<input type="number"
+		       name="level"
+		       placeholder="Nivel"
+		       ng-model="newsubscriptionlevel">
+		<button ng-click="postSubscription()"
+			class="btn">
+		  Crear
+		</button>
 	      </td>
 	    </tr>
 	  </table>
 
+	  <h2>Grupos</h2>
+	  <table class="table table-striped table-bordered">
+	    <tr>
+	      <th>Tipo</th>
+	      <th>Creado en</th>
+	      <th>Acciones</th>
+	    </tr>
+	    {% raw %}
+	    <tr ng-repeat="g in groups">
+	      <td>{{ g.name }}</td>
+	      <td>{{ g.when }}</td>
+	      <td><button class="btn btn-danger"
+			  ng-click="deleteGroup(g.id)">
+		  Borrar
+		  </button>
+	      </td>
+	    </tr>
+	    {% endraw %}
+	    <tr>
+	      <td>
+		<input type="text"
+		       name="name"
+		       class="form-control"
+		       ng-model="newgroupname"
+		       placeholder="Nombre">
+	      </td>
+	      <td>
+	      </td>
+	      <td>
+		<button ng-click="postGroup()"
+			class="btn">
+		  Crear
+		</button>
+	      </td>
+	    </tr>
+	  </table>
+	  
+	  
 	  <h2>Usuarios</h2>
 	  <table class="table table-striped table-bordered">
 	    <tr>
 	      <th>Nombre</th>
 	      <th>Contraseña</th>
 	      <th>Nivel de Suscripción</th>
+	      <th>Grupo</th>
 	      <th>Creado en</th>
 	      <th>Acción</th>
 	    </tr>
-	    {% for u in users %}
-	    <tr>
+	    {% raw %}
+	    <tr ng-repeat="u in users">
 	      <td>{{ u.name }}</td>
 	      <td>{{ u.password }}</td>
 	      <td>{{ u.subscription }}</td>
-	      <td>{{ u.when.strftime('%d-%m-%Y') }}</td>
+	      <td>{{ u.group }}</td>
+	      <td>{{ u.when }}</td>
 	      <td>
-		<form action="/users" method="post">
-		  <input type="text"
-			 name="what"
-			 value="user"
-			 hidden>
-		  <input type="text"
-			 name="action"
-			 value="delete"
-			 hidden>
-		  <input type="text"
-			 name="key"
-			 value="{{ u.key.urlsafe() }}"
-			 hidden>
-		  <input type="submit" value="Borrar">
-	      </form></td>
+		<button class="btn btn-danger"
+			ng-click="deleteUser('{{ u.key }}')">
+		  Borrar
+		</button>
+	      </td>
 	    </tr>
-	    {% endfor %}
+	    {% endraw %}
 	    <tr>
 	      <td>
-		<form action="/users" method="post">
-		  <input type="text"
-			 name="what"
-			 value="user"
-			 hidden>
-		  <input type="text"
-			 name="action"
-			 value="create"
-			 hidden>
-		  <input type="text"
-			 name="name"
-			 placeholder="Nombre">
+		<input type="text"
+		       name="name"
+		       ng-model="newusername"
+		       class="form-control"
+		       placeholder="Nombre">
 	      </td>
 	      <td>
-		  <input type="text"
-			 name="password"
-			 placeholder="Contraseña">
+		<input type="text"
+		       name="password"
+		       ng-model="newuserpassword"
+		       placeholder="Contraseña"
+		       class="form-control">
 	      </td>
 	      <td>
-		  <input type="text"
-			 name="subscription"
-			 placeholder="Suscripción">
+		<select ng-options="s.id as s.name for s in subscriptions"
+			ng-model="newusersubscription"
+			class="form-control"></select>
 	      </td>
-	      <td></td>
 	      <td>
-		  <input type="submit" value="Crear">
-		</form>
+		<select ng-options="g.id as g.name for g in groups"
+			ng-model="newusergroup"
+			class="form-control"></select>
 	      </td>
+	      <td>
+	      </td>
+	      <td>
+		<button class="btn" ng-click="postUser()">
+		  Crear Usuario
+		</button>
+	    </td>
 	    </tr>
-
+	    
 	  </table>
 	</div>
       </div>

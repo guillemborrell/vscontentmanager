@@ -12,10 +12,8 @@ from models import User, Session, Page, Subscription
 from models import Media, Message, Task, Group
 from resources import UserResource, GroupResource, TaskResource
 from resources import AssignmentResource, SubscriptionResource
+from utils import check_user, AUTHORIZED_USERS
 
-AUTHORIZED_USERS = ['guillemborrell@gmail.com',
-                    'beatriz88rc@gmail.com',
-                    'c.protocolservices@gmail.com']
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -27,16 +25,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 
 
-def check_user(user):
-    if user:
-        if user.email() in AUTHORIZED_USERS:
-            return user, users.create_logout_url('/')
-
-        else:
-            return False, False
-
-    else:
-        return False, False
 
 def process_text(text):
     # Process the small markup here.

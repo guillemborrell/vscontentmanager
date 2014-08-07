@@ -6,35 +6,24 @@ from google.appengine.datastore.datastore_query import Cursor
 from models import User, Session, Page, Subscription
 from models import Media, Message, Task, Group
 
+from utils import check_user, AUTHORIZED_USERS
 
 class UserResource(webapp2.RequestHandler):
     def get(self):
         user, logout = check_user(users.get_current_user())
         if user:
-            if self.request.get('id'):
-                u = [ndb.Key(urlsafe=self.request.get('id')).get()]
-                data = json.dumps([u.to_dict()])
-                
-            elif self.request.get('page'):
-                if self.request.get('page') == 'start':
-                    curs = None
-                else:
-                    curs = Cursor(urlsafe=self.request.get('page'))
-                    
-                u = []
-                more = True
+            u = []
+            more = True
+            cursor = None
 
-                while more:
-                    d, curs, more = User.query().order(-User.when).fetch_page(10, start_cursor=cursor)
-                    for ditem in d:
-                        u.apppend(ditem)
-                        
-            else:
-                data = []
+            while more:
+                d, cursor, more = User.query().order(
+                    -User.when).fetch_page(10, start_cursor=cursor)
+                for ditem in d:
+                    u.append(ditem.to_dict())
             
             self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(data)
-
+            self.response.out.write(json.dumps({'data':u}))
 
 
     def post(self):
@@ -43,7 +32,7 @@ class UserResource(webapp2.RequestHandler):
             body = json.loads(self.request.body)
             User(name = body['name'],
                  password = body['password'],
-                 subscription = body['subscription'],
+                 subscription = ndb.Key(urlsafe=body['subscription']),
                  group = ndb.Key(urlsafe=body['group'])).put()
 
 
@@ -51,8 +40,8 @@ class UserResource(webapp2.RequestHandler):
         user, logout = check_user(users.get_current_user())
         if user:
             key = self.request.get('id')
-            task = ndb.Key(urlsafe=key)
-            task.delete()
+            u = ndb.Key(urlsafe=key)
+            u.delete()
 
 
 
@@ -60,30 +49,17 @@ class SubscriptionResource(webapp2.RequestHandler):
     def get(self):
         user, logout = check_user(users.get_current_user())
         if user:
-            if self.request.get('id'):
-                u = [ndb.Key(urlsafe=self.request.get('id')).get()]
-                data = json.dumps([u.to_dict()])
-                
-            elif self.request.get('page'):
-                if self.request.get('page') == 'start':
-                    curs = None
-                else:
-                    curs = Cursor(urlsafe=self.request.get('page'))
-                    
-                u = []
-                more = True
+            u = []
+            more = True
+            cursor = None
+            while more:
+                d, cursor, more = Subscription.query().order(-Subscription.when).fetch_page(10, start_cursor=cursor)
+                for ditem in d:
+                    u.append(ditem.to_dict())
 
-                while more:
-                    d, curs, more = Subscription.query().order(-Subscription.when).fetch_page(10, start_cursor=cursor)
-                    for ditem in d:
-                        u.apppend(ditem)
-                        
-            else:
-                data = []
-            
-            self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(data)
-
+                                    
+        self.response.out.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps({'data':u}))
 
 
     def post(self):
@@ -106,29 +82,22 @@ class GroupResource(webapp2.RequestHandler):
     def get(self):
         user, logout = check_user(users.get_current_user())
         if user:
-            if self.request.get('id'):
-                u = [ndb.Key(urlsafe=self.request.get('id')).get()]
-                data = json.dumps([u.to_dict()])
-                
-            elif self.request.get('page'):
-                if self.request.get('page') == 'start':
-                    curs = None
-                else:
-                    curs = Cursor(urlsafe=self.request.get('page'))
-                    
-                u = []
-                more = True
-
-                while more:
-                    d, curs, more = Group.query().order(-Group.when).fetch_page(10, start_cursor=cursor)
-                    for ditem in d:
-                        u.apppend(ditem)
+            u = []
+            more = True
+            cursor = None
+            while more:
+                d, curs, more = Group.query(
+                    Group.active == True).order(
+                        -Group.when).fetch_page(
+                            10, start_cursor=cursor)
+                for ditem in d:
+                    u.append(ditem.to_dict())
                         
-            else:
-                data = []
+        else:
+            u = []
             
-            self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(data)
+        self.response.out.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps({'data':u}))
 
 
 
@@ -136,15 +105,18 @@ class GroupResource(webapp2.RequestHandler):
         user, logout = check_user(users.get_current_user())
         if user:
             body = json.loads(self.request.body)
-            Group(name = body['name']).put()
+            Group(name = body['name'],
+                  active = True).put()
 
 
+    @ndb.transactional
     def delete(self):
         user, logout = check_user(users.get_current_user())
         if user:
             key = self.request.get('id')
-            task = ndb.Key(urlsafe=key)
-            task.delete()
+            g = ndb.Key(urlsafe=key).get()
+            g.active = False
+            g.put()
 
 
 class TaskResource(webapp2.RequestHandler):
@@ -156,7 +128,7 @@ class TaskResource(webapp2.RequestHandler):
                 data = json.dumps([u.to_dict()])
                 
             elif self.request.get('page'):
-                if self.request.get('page') == 'start':
+                if self.request.get('page') == 'all':
                     curs = None
                 else:
                     curs = Cursor(urlsafe=self.request.get('page'))
@@ -173,7 +145,7 @@ class TaskResource(webapp2.RequestHandler):
                 data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(data)
+            self.response.out.write(json.dumps({'data':data}))
 
 
 
@@ -203,7 +175,7 @@ class AssignmentResource(webapp2.RequestHandler):
                 data = json.dumps([u.to_dict()])
                 
             elif self.request.get('page'):
-                if self.request.get('page') == 'start':
+                if self.request.get('page') == 'all':
                     curs = None
                 else:
                     curs = Cursor(urlsafe=self.request.get('page'))
@@ -220,7 +192,7 @@ class AssignmentResource(webapp2.RequestHandler):
                 data = []
             
             self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(data)
+            self.response.out.write(json.dumps({'data':data}))
 
 
 

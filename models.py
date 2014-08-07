@@ -14,17 +14,20 @@ class Subscription(ndb.Model):
 class Group(ndb.Model):
     name = ndb.StringProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
+    active = ndb.BooleanProperty()
     
     def to_dict(self):
         return {"id": self.key.urlsafe(),
                 "name": self.name,
+                "active": self.active,
                 "when": self.when.strftime("%b %d %Y %H:%M:%S")}
+
 
 class User(ndb.Model):
     name = ndb.StringProperty()
     password = ndb.StringProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
-    subscription = ndb.IntegerProperty()
+    subscription = ndb.KeyProperty(kind=Subscription)
     group = ndb.KeyProperty(kind=Group)
 
     def to_dict(self):
@@ -32,8 +35,9 @@ class User(ndb.Model):
                 "name": self.name,
                 "password": self.password,
                 "when": self.when.strftime("%b %d %Y %H:%M:%S"),
-                "subscription": self.subscription,
-                "group": self.group.urlsafe()}
+                "subscription": self.subscription.get().name,
+                "group": self.group.get().name}
+
 
 class Session(ndb.Model):
     when = ndb.DateTimeProperty(auto_now_add = True)
@@ -90,12 +94,14 @@ class Task(ndb.Model):
     kind = ndb.StringProperty()
     data = ndb.JsonProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
+    active = ndb.BooleanProperty
 
     def to_dict(self):
         return {"id": self.key.urlsafe(),
                 "name": self.name,
                 "kind": self.kind,
                 "data": self.data,
+                "active": self.active,
                 "when": self.when.strftime("%b %d %Y %H:%M:%S")}
 
 
