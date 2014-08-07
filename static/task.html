@@ -49,7 +49,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/" class="navbar-brand">Comm. Protocol Services</a>
+          <a href="/activity" class="navbar-brand">Comm. Protocol Services</a>
 	</div>
 	
 	<!-- Collect the nav links, forms, and other content for toggling -->
@@ -59,13 +59,10 @@
               <a href="#page-top"></a>
             </li>
             <li>
-	      <a href="/app/home">Índice</a>
+	      <a href="#">Bla</a>
             </li>
             <li>
-	      <a href="/user?id={{ user.key.urlsafe() }}">
-		<i class="fa fa-user"></i>
-		{{ user.name }}
-	      </a>
+	      <a href="#">Bla</a>
             </li>	    
             <li>
 	      <a href="/logout">Salir</a>
@@ -79,79 +76,118 @@
     {% endblock %}
     
     {% block content %}
+    {% raw %}
     <section id="services">
-      <div class="container">
+      <div class="container" ng-controller="createTask">
 	<div class="row">
           <div class="col-lg-12">
-	    {% if activities %}
-	    <div class="well">
-	      <h2>Actividades</h2>
-	      <ul>
-	      {% for activity in activities %}
-	      <li><a href="#">{{ activity.title }}</a></li>
-	      {% endfor %}
-	      </ul>
+	    <h2>Nuevo ejercicio</h2>
+	    <form>
+	      <div class="form-group">
+		<select ng-model="type" ng-options="task for task in available_tasks" class="form-control">
+		  <option value="">Seleccione tipo de ejercicio</option>
+		</select>
+	      </div>
+	    </form>
+
+	    <!-- TEST -->
+	    <div ng-if="type == 'Test'">
+	      <h3>Crear test</h3>
+	      <form>
+		<div class="form-group">
+		  <label>Nombre</label>
+		  <input type="text" ng-model="test.name">
+		</div>
+		<div style="margin-left:20px;" class="well"
+		     ng-repeat="item in test.question_list track by $index">
+		  <div class="form-group">
+		    <label>Enunciado (Menos de 500 caracteres)</label>
+		    <input type="text" ng-model="item.question">
+		  </div>
+		  <ol style="margin-left:20px;">
+		    <li ng-repeat="choice in item.choices track by $index">
+		      <input type="text"
+			     ng-model="choice"></li>
+		    <button class="btn btn-info"
+			    ng-click="add_choice_to_question(item.choices)">
+		      Añadir opción
+		    </button>
+		    <button class="btn bgn-danger"
+			    ng-click="remove_choice_from_question(item.choices)">
+		      Quitar opción
+		    </button>
+		  </ol>
+		  <div class="form-group">
+		    <label>Correcto</label>
+		    <input type="number" ng-model="item.right">
+		  </div>
+		</div>
+		<div style="margin-left:20px;">
+		  <button class="btn btn-info"
+			  ng-click="add_question_to_test(test.question_list)">
+		    Añadir pregunta
+		  </button>
+		</div>
+	      </form>
+	      <div style="margin-top:20px;">
+		<button class="btn btn-success"
+			ng-click="submit_test()">
+		  Crear test.
+		</button>
+	      </div>
+	    </div>  
+	    <!-- ACTIVIDAD -->
+	    <div ng-if="type == 'Actividad'">
+	      <h3>Crear actividad</h3>
+	      <form role="form">
+		<div class="form-group">
+		  <label for="name">Nombre</label>
+		  <input type="text"
+			 ng-model="activity.name"
+			 id="name">
+		</div>
+		<div class="form-group">
+		  <label for="name">Descripción</label>
+		  <textarea>{{ activity.description }}</textarea>
+		</div>
+		<button class="btn btn-success" ng-click="submit_activity()">
+		  Crear Actividad
+		</button>
+	      </form>
 	    </div>
-	    {% endif %}
-	    <div class="text-center">
-              <h2>{{ page.title }}</h2>
+	    
+	    <!-- PREGUNTA -->
+	    <div ng-if="type == 'Pregunta'">
+	      <h3>Crear pregunta</h3>
+	      <form role="form">
+		<div class="form-group">
+		  <label for="name">Nombre</label>
+		  <input type="text"
+			 ng-model="question.name" id="name">
+		</div>
+		<div class="form-group">
+		  <label for="name">Pregunta (menos de 500 caracteres)</label>
+		  <input type="text"
+			 ng-model="question.question" id="name">
+		</div>
+		<div class="form-group">
+		  <label for="name">Respuesta (menos de 500 caracteres)</label>
+		  <input type="text"
+			 ng-model="question.answer" id="name">
+		</div>
+		<button class="btn btn-success" ng-click="submit_question()">
+		  Crear Pregunta
+		</button>
+	      </form>
 	    </div>
-	    {{ text|safe }}
 	  </div>
 	</div>
       </div>
     </section>
-    <section id="comments">
-      <div class="container">
-	<div class="row">
-	  <div id="disqus_thread"></div>
-	  <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'vscontentmanager'; // required: replace example with your forum shortname
-	    
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-	  </script>
-	  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-	  <a href="http://disqus.com" class="dsq-brlink">comments powered
-	    by <span class="logo-disqus">Disqus</span></a>
-	</div>
-      </div>
-    </section>
+    {% endraw %}
     {% endblock %}
-    
+
     {% block footer %}
-    <footer class="bg-light-gray">
-      <div class="container">
-	<div class="row">
-          <div class="col-md-4">
-            <span class="copyright">Copyright &copy; Your Website 2014</span>
-          </div>
-          <div class="col-md-4">
-            <ul class="list-inline social-buttons">
-              <li><a href="#"><i class="fa fa-twitter"></i></a>
-              </li>
-              <li><a href="#"><i class="fa fa-facebook"></i></a>
-              </li>
-              <li><a href="#"><i class="fa fa-linkedin"></i></a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <ul class="list-inline quicklinks">
-              <li><a href="#">Privacy Policy</a>
-              </li>
-              <li><a href="#">Terms of Use</a>
-              </li>
-            </ul>
-          </div>
-	</div>
-      </div>
-    </footer>
     {% endblock %}
     
     <!-- jQuery Version 1.11.0 -->

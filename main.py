@@ -3,11 +3,15 @@ import webapp2
 import jinja2
 import re
 import urllib
+import json
 from google.appengine.api import users
 from google.appengine.ext import ndb
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
-from models import User, Session, Page, Subscription, Media, Message
+from models import User, Session, Page, Subscription
+from models import Media, Message, Task, Group
+from resources import UserResource, GroupResource, TaskResource
+from resources import AssignmentResource, SubscriptionResource
 
 AUTHORIZED_USERS = ['guillemborrell@gmail.com',
                     'beatriz88rc@gmail.com',
@@ -246,69 +250,6 @@ class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
         self.send_blob(blob_info)
 
 
-class UsersPage(webapp2.RequestHandler):
-    ## This object is non REST rubbish, but I don't care.
-    def get(self):
-        user, logout = check_user(users.get_current_user())
-        if user:
-            template_args = {'logout_url': users.create_logout_url('/')}
-            subscription_list = list()
-            more = True
-            curs = None
-            while more:
-                s, curs, more = Subscription.query(
-                ).fetch_page(
-                    10, start_cursor=curs)
-                for sitem in s:
-                    subscription_list.append(sitem)
-
-            template_args['subscriptions'] = subscription_list
-
-            users_list = list()
-            more = True
-            curs = None
-            while more:
-                u, curs, more = User.query(
-                ).order(
-                    -User.when).fetch_page(
-                        10, start_cursor=curs)
-                for uitem in u:
-                    users_list.append(uitem)
-
-            template_args['users'] = users_list
-
-            template = JINJA_ENVIRONMENT.get_template('users.html')
-            self.response.write(template.render(template_args))
-
-        else:
-            self.redirect('/admin')
-
-    def post(self):
-        user, logout = check_user(users.get_current_user())
-        if user:
-            what = self.request.get('what')
-            action = self.request.get('action')
-
-            if what == 'subscription' and action == 'create':
-                Subscription(name=self.request.get('name'),
-                             level=int(self.request.get('level'))
-                         ).put()
-                
-            elif what == 'user' and action == 'delete':
-                user = ndb.Key(urlsafe=self.request.get('key'))
-                user.delete()
-
-            elif what == 'user' and action == 'create':
-                User(
-                    name = self.request.get('name'),
-                    password = self.request.get('password'),
-                    subscription = int(self.request.get('subscription'))
-                ).put()
-
-
-        self.redirect('/users')
-
-
 class LoginPage(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('login.html')
@@ -384,6 +325,105 @@ class BootPage(webapp2.RequestHandler):
 
         self.redirect('/')
 
+
+## HERE IS WHERE THE REST STARTS
+class ActivityPage(webapp2.RequestHandler):
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            template_args = {'logout_url': users.create_logout_url('/')}
+
+            task_list = list()
+            more = True
+            curs = None
+            while more:
+                t, curs, more = Task.query(
+                ).fetch_page(
+                    10, start_cursor=curs)
+                for titem in t:
+                    task_list.append(titem)
+
+            template_args['tasks'] = task_list
+
+            template = JINJA_ENVIRONMENT.get_template('activity.html')
+            self.response.write(template.render(template_args))
+
+        else:
+            self.redirect('/admin')
+
+
+class UsersPage(webapp2.RequestHandler):
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            template_args = {'logout_url': users.create_logout_url('/')}
+            subscription_list = list()
+            more = True
+            curs = None
+            while more:
+                s, curs, more = Subscription.query(
+                ).fetch_page(
+                    10, start_cursor=curs)
+                for sitem in s:
+                    subscription_list.append(sitem)
+
+            template_args['subscriptions'] = subscription_list
+
+            users_list = list()
+            more = True
+            curs = None
+            while more:
+                u, curs, more = User.query(
+                ).order(
+                    -User.when).fetch_page(
+                        10, start_cursor=curs)
+                for uitem in u:
+                    users_list.append(uitem)
+
+            template_args['users'] = users_list
+
+            template = JINJA_ENVIRONMENT.get_template('users.html')
+            self.response.write(template.render(template_args))
+
+        else:
+            self.redirect('/admin')
+
+
+class TaskPage(webapp2.RequestHandler):
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            template_args = {
+                'logout_url': users.create_logout_url('/')
+            }
+            
+            template = JINJA_ENVIRONMENT.get_template('task.html')
+            self.response.write(
+                template.render(template_args)
+            )
+
+        else:
+            self.redirect('/admin')
+
+
+class AssignmentPage(webapp2.RequestHandler):
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            template_args = {
+                'logout_url': users.create_logout_url('/')
+            }
+            
+            template = JINJA_ENVIRONMENT.get_template('assignment.html')
+            self.response.write(
+                template.render(template_args)
+            )
+
+        else:
+            self.redirect('/admin')
+
+
+
 app = webapp2.WSGIApplication(
     [
         webapp2.Route(r'/',MainPage),
@@ -396,6 +436,14 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/upload',UploadHandler),
         webapp2.Route(r'/serve/<resource:.*>',ServeHandler),
         webapp2.Route(r'/users',UsersPage),
+        webapp2.Route(r'/activity',ActivityPage),
+        webapp2.Route(r'/assignment',AssignmentPage),
         webapp2.Route(r'/blog',BlogPage),
-        webapp2.Route(r'/boot',BootPage)
+        webapp2.Route(r'/boot',BootPage),
+        webapp2.Route(r'/task',TaskPage),
+        webapp2.Route(r'/REST/user',UserResource),
+        webapp2.Route(r'/REST/group',GroupResource),
+        webapp2.Route(r'/REST/subscription',SubscriptionResource),
+        webapp2.Route(r'/REST/task',TaskResource),
+        webapp2.Route(r'/REST/assignment',AssignmentResource)
     ], debug = True)
