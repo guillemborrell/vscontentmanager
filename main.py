@@ -35,7 +35,7 @@ def process_text(text):
         page = Page.query(Page.slug == slug).fetch(1)
         if page:
             replacements.append('app')
-            replacements.append('<i class="fa fa-external-link"></i>')
+            replacements.append('<i class="fa fa-external-link-square"></i>')
         else:
             replacements.append('content')
             replacements.append('')
@@ -52,7 +52,7 @@ def process_text_admin(text):
         page = Page.query(Page.slug == slug).fetch(1)
         if page:
             replacements.append('content')
-            replacements.append('<i class="fa fa-external-link"></i>')
+            replacements.append('<i class="fa fa-external-link-square"></i>')
         else:
             replacements.append('content')
             replacements.append('<i class="fa fa-edit"></i>')
