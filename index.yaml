@@ -10,6 +10,18 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Assignment
+  properties:
+  - name: active
+  - name: when
+    direction: desc
+
+- kind: Assignment
+  properties:
+  - name: user
+  - name: when
+    direction: desc
+
 - kind: Group
   properties:
   - name: active

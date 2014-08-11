@@ -110,8 +110,8 @@ class Assignment(ndb.Model):
     task = ndb.KeyProperty()
     user = ndb.KeyProperty()
     duration_in_minutes = ndb.IntegerProperty()
-    start = ndb.DateTimeProperty()
-    due = ndb.DateTimeProperty()
+    start = ndb.DateProperty()
+    due = ndb.DateProperty()
     result = ndb.JsonProperty()
     completed = ndb.BooleanProperty()
     revised = ndb.BooleanProperty()
@@ -120,8 +120,10 @@ class Assignment(ndb.Model):
     def to_dict(self):
         return {"id": self.key.urlsafe(),
                 "when": self.when.strftime("%b %d %Y %H:%M:%S"),
-                "task": self.task.urlsafe(),
-                "user": self.user.urlsafe(),
+                "taskid": self.task.urlsafe(),
+                "task": self.task.get().name,
+                "userid": self.user.urlsafe(),
+                "user": self.user.get().name,
                 "duration_in_minutes": self.duration_in_minutes,
                 "start": self.start.strftime("%b %d %Y %H:%M:%S"),
                 "due": self.due.strftime("%b %d %Y %H:%M:%S"),

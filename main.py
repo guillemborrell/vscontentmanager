@@ -9,9 +9,10 @@ from google.appengine.ext import ndb
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from models import User, Session, Page, Subscription
-from models import Media, Message, Task, Group
+from models import Media, Message, Task, Group, Assignment
 from resources import UserResource, GroupResource, TaskResource
 from resources import AssignmentResource, SubscriptionResource
+from resources import MakeAssignmentResource
 from utils import check_user, AUTHORIZED_USERS
 
 
@@ -79,7 +80,10 @@ class AppPage(webapp2.RequestHandler):
             session = ndb.Key(urlsafe=str(cookie)).get()
             user = session.key.parent().get()
             page = Page.query(Page.slug == slug).get()
-            activities = []
+            assignments = Assignment.query(
+                Assignment.user == user.key).order(
+                    -Assignment.when).fetch(10)
+
             if page:
                 #TODO: Manage subscriptions
                 template = JINJA_ENVIRONMENT.get_template('app.html')
@@ -87,7 +91,7 @@ class AppPage(webapp2.RequestHandler):
                     {'auth': True,
                      'page': page,
                      'user': user,
-                     'activities': activities,
+                     'assignments': assignments,
                      'text': process_text(page.text)}))
             
             else:
@@ -394,6 +398,24 @@ class TaskPage(webapp2.RequestHandler):
             self.redirect('/admin')
 
 
+class ViewTaskPage(webapp2.RequestHandler):
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            template_args = {
+                'logout_url': users.create_logout_url('/')
+            }
+            
+            template = JINJA_ENVIRONMENT.get_template('viewtask.html')
+            self.response.write(
+                template.render(template_args)
+            )
+
+        else:
+            self.redirect('/admin')
+
+
+
 class AssignPage(webapp2.RequestHandler):
     def get(self):
         user, logout = check_user(users.get_current_user())
@@ -409,6 +431,24 @@ class AssignPage(webapp2.RequestHandler):
 
         else:
             self.redirect('/admin')
+
+
+class MakeAssignmentPage(webapp2.RequestHandler):
+    def get(self):
+        cookie = self.request.cookies.get('CookieProtocolServices')
+        if cookie:
+            session = ndb.Key(urlsafe=str(cookie)).get()
+            user = session.key.parent().get()
+
+            template_args = {'user': user}
+            
+            template = JINJA_ENVIRONMENT.get_template('makeassignment.html')
+            self.response.write(
+                template.render(template_args)
+            )
+
+        else:
+            self.redirect('/login?to={}'.format(slug))
 
 
 
@@ -429,9 +469,12 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/blog',BlogPage),
         webapp2.Route(r'/boot',BootPage),
         webapp2.Route(r'/task',TaskPage),
+        webapp2.Route(r'/viewtask',ViewTaskPage),
+        webapp2.Route(r'/makeassignment',MakeAssignmentPage),
         webapp2.Route(r'/REST/user',UserResource),
         webapp2.Route(r'/REST/group',GroupResource),
         webapp2.Route(r'/REST/subscription',SubscriptionResource),
         webapp2.Route(r'/REST/task',TaskResource),
-        webapp2.Route(r'/REST/assignment',AssignmentResource)
+        webapp2.Route(r'/REST/assignment',AssignmentResource),
+        webapp2.Route(r'/REST/makeassignment',MakeAssignmentResource)
     ], debug = True)

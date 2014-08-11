@@ -1,10 +1,11 @@
 import json
 import webapp2
+import datetime
 from google.appengine.api import users
 from google.appengine.ext import ndb
 from google.appengine.datastore.datastore_query import Cursor
 from models import User, Session, Page, Subscription
-from models import Media, Message, Task, Group
+from models import Media, Message, Task, Group, Assignment
 
 from utils import check_user, AUTHORIZED_USERS
 
@@ -121,27 +122,24 @@ class GroupResource(webapp2.RequestHandler):
 
 class TaskResource(webapp2.RequestHandler):
     def get(self):
-        user, logout = check_user(users.get_current_user())
-        if user:
-            if self.request.get('id'):
-                u = [ndb.Key(urlsafe=self.request.get('id')).get()]
-                
-            else:
-                cursor = None
-                u = []
-                more = True
-
-                while more:
-                    d, cursor, more = Task.query(
-                        Task.active == True).order(
-                            -Task.when).fetch_page(
-                                10, start_cursor=cursor)
-                    for ditem in d:
-                        u.append(ditem.to_dict())
-                        
+        if self.request.get('id'):
+            u = ndb.Key(urlsafe=self.request.get('id')).get().to_dict()
             
-            self.response.out.headers['Content-Type'] = 'application/json'
-            self.response.out.write(json.dumps({'data':u}))
+        else:
+            cursor = None
+            u = []
+            more = True
+            
+            while more:
+                d, cursor, more = Task.query(
+                    Task.active == True).order(
+                        -Task.when).fetch_page(
+                            10, start_cursor=cursor)
+                for ditem in d:
+                    u.append(ditem.to_dict())
+                    
+        self.response.out.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps({'data':u}))
 
 
     def post(self):
@@ -175,7 +173,7 @@ class AssignmentResource(webapp2.RequestHandler):
                 t.put()
                 
             else:
-                cursor
+                cursor = None
                 u = []
                 more = True
 
@@ -192,20 +190,50 @@ class AssignmentResource(webapp2.RequestHandler):
             self.response.out.write(json.dumps({'data':u}))
 
 
-
     def post(self):
         user, logout = check_user(users.get_current_user())
         if user:
             body = json.loads(self.request.body)
-            Task(name = body['name'],
-                 kind = body['kind'],
-                 data = body['data']).put()
 
+            assigned_users = User.query(
+                User.group == ndb.Key(urlsafe=body['group'])).fetch(100)
 
+            for u in assigned_users:
+                Assignment(
+                    task = ndb.Key(urlsafe=body['task']),
+                    user = u.key,
+                    duration_in_minutes = int(body['duration_in_minutes']),
+                    start = datetime.datetime.strptime(
+                        body['start'],
+                        "%a, %d %b %Y %H:%M:%S %Z"),
+                    due = datetime.datetime.strptime(
+                        body['due'],
+                        "%a, %d %b %Y %H:%M:%S %Z"),
+                    result = {},
+                    completed = False,
+                    revised = False,
+                    active = True,
+                ).put()
+            
+
+    @ndb.transactional
     def delete(self):
         user, logout = check_user(users.get_current_user())
         if user:
             key = self.request.get('id')
+            #even more things here
             task = ndb.Key(urlsafe=key)
             task.delete()
 
+
+class MakeAssignmentResource(webapp2.RequestHandler):
+    def get(self):
+        assignment = ndb.Key(urlsafe=self.request.get('id')).get()
+        self.response.out.headers['Content-Type'] = 'application/json'
+        self.response.out.write(
+            json.dumps({'data':assignment.to_dict()})
+        )
+
+
+    def post(self):
+        pass

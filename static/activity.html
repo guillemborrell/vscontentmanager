@@ -46,7 +46,7 @@
 	    </tr>
 	    {% raw %}
 	    <tr ng-repeat="t in tasks">
-	      <td>{{ t.name }}</td>
+	      <td><a href="/viewtask?id={{ t.id }}">{{ t.name }}</a></td>
 	      <td>{{ t.kind }}</td>
 	      <td>{{ t.when }}</td>
 	      <td>
@@ -66,6 +66,29 @@
 	  <a href="/task"><button class="btn btn-success">Crear ejercicio
 	  </button></a>
 	  <h2>Tareas</h2>
+	  <table class="table table-striped table-bordered">
+	    <tr>
+	      <th>Tipo</th>
+	      <th>Creado en</th>
+	      <th>Usuario</th>
+	      <th>Acciones</th>
+	    </tr>
+	    {% raw %}
+	    <tr ng-repeat="a in assignments">
+	      <td>{{ a.task }}</td>
+	      <td>{{ a.when }}</td>
+	      <td>{{ a.user }}</td>
+	      <td>
+		<span ng-if="a.completed">
+		  <button class="btn btn-info">
+		    Revisar
+		  </button>
+		</span>
+		<button class="btn btn-danger">Borrar</button>
+	      </td>
+	    </tr>
+	    {% endraw %}
+	  </table>
 	</div>
       </div>
     </div>

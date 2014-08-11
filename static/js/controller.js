@@ -1,4 +1,4 @@
-var taskApp = angular.module('taskApp', ['ngResource']);
+var taskApp = angular.module('taskApp', ['ngResource','ui.bootstrap']);
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -84,16 +84,52 @@ taskApp.controller('userController', function($scope, $resource){
 }
 		  );
 
+taskApp.controller('assignmentController', function($scope, $resource){
+    $scope.assignmentid = getParameterByName('id');
+    $scope.assignmentresource = $resource("REST/assignment");
+    $scope.thisassignment = {};
+
+    var dataa = $scope.assignmentresource.get(function(){
+	$scope.thisassignment = dataa.data;
+    },params={id: task} )
+}
+		  );
+
 taskApp.controller('assignController', function($scope, $resource) {
     $scope.task = getParameterByName('id');
+    $scope.groupresource = $resource("/REST/group");
+    $scope.assignmentresource = $resource("REST/assignment");
+    $scope.groups = [];
+    $scope.newgroup = '';
+    $scope.start = new Date();
+    $scope.due = new Date();
+    $scope.duration_in_minutes = '';
+    var datag = $scope.groupresource.get(function(){
+	for (i in datag.data){
+	    $scope.groups.push(datag.data[i]);
+	}
+    });
+    $scope.postAssignment = function(){
+	$scope.assignmentresource.save({
+	    "task": $scope.task,
+	    "group": $scope.newgroup,
+	    "start": $scope.start.toUTCString(),
+	    "due": $scope.due.toUTCString(),
+	    "duration_in_minutes": $scope.duration_in_minutes}
+				      )
+	window.location.replace('/activity');
+    };
     
 }
 		  );
 
+
 taskApp.controller('activityController', function($scope, $resource) {
     $scope.taskresource = $resource("/REST/task");
     $scope.groupresource = $resource("/REST/group");
+    $scope.assignmentresource = $resource("/REST/assignment");
     $scope.tasks = [];
+    $scope.assignments = [];
 
     var datat = $scope.taskresource.get(function(){
 	for (i in datat.data){
@@ -101,11 +137,12 @@ taskApp.controller('activityController', function($scope, $resource) {
 	}
     });
 
-    var datag = $scope.groupresource.get(function(){
-	for (i in datag.data){
-	    $scope.groups.push(datag.data[i]);
+    var dataa = $scope.assignmentresource.get(function(){
+	for (i in dataa.data){
+	    $scope.assignments.push(dataa.data[i]);
+	    }
 	}
-    });
+					     );
 
     $scope.deletetask = function(task){
 	var ask = confirm("¿Seguro que quieres borrar esta tarea?");
@@ -121,7 +158,7 @@ taskApp.controller('activityController', function($scope, $resource) {
 	
 });
 
-taskApp.controller('createTask', function ($scope, $resource) {
+taskApp.controller('taskController', function ($scope, $resource) {
     $scope.available_tasks = ['Test','Actividad','Pregunta'];
     $scope.type = '';
     $scope.question = {"name": "",
@@ -175,6 +212,107 @@ taskApp.controller('createTask', function ($scope, $resource) {
 	);
 	window.location.replace('/activity');
     };
+
+}
+		  );
+
+
+taskApp.controller('viewTaskController', function ($scope, $resource) {
+    $scope.taskid = getParameterByName('id');
+    console.log($scope.taskid);
+    $scope.taskresource = $resource("/REST/task");
+    $scope.available_tasks = ['Test','Actividad','Pregunta'];
+    $scope.type = "";
+    $scope.question = {"name": "",
+		       "question": "",
+		       "answer": ""};
+    $scope.activity = {"name":"",
+		       "description":""};
+    $scope.test = {"name": "",
+		   "question_list": [{"question": "",
+				      "choices": ["1", "2", "3", "4"],
+				      "right": 1}
+				    ]
+		  };
+    
+    var datat = $scope.taskresource.get({id: $scope.taskid},
+					function() {
+	$scope.type = datat.data.kind;
+	if ($scope.type == "Test"){
+	    $scope.test = datat.data.data;
+	}
+	if ($scope.type == "Actividad"){
+	    $scope.activity = datat.data.data;
+	}
+	if ($scope.type == "Pregunta"){
+	    $scope.question = datat.data.data;
+	}
+					}
+				       );
+    
+    $scope.error = false;
+    $scope.add_question_to_test = function(question_list){
+	question_list.push({"question": "",
+			    "choices": ["", "", "", ""],
+			    "right": 0});
+    }
+    $scope.add_choice_to_question = function(choices){
+	choices.push("");
+    }
+    $scope.remove_choice_from_question = function(choices){
+	choices.pop();
+    }
+    
+    
+    $scope.submit_question = function (){
+	var data = $scope.taskresource.save(
+	    {"kind": $scope.type,
+	     "name": $scope.question.name,
+	     "data": $scope.question}
+	);
+	window.location.replace('/activity');
+    };
+    
+    $scope.submit_activity = function (){
+	var data = $scope.taskresource.save(
+	    {"kind": $scope.type,
+	     "name": $scope.activity.name,
+	     "data": $scope.activity}
+	);
+	window.location.replace('/activity');
+    };
+    $scope.submit_test = function (){
+	var data = $scope.taskresource.save(
+	    {"kind": $scope.type,
+	     "name": $scope.test.name,
+	     "data": $scope.test}
+	);
+	window.location.replace('/activity');
+    };
+    
+}
+		  );
+
+
+taskApp.controller('makeAssignmentController', function ($scope, $resource) {
+    $scope.assignmentid = getParameterByName('id');
+    $scope.asgmtresource = $resource("/REST/makeassignment");
+    $scope.taskresource = $resource("/REST/task");
+    $scope.assignment = {};
+    $scope.task = {};
+    $scope.results = {};
+
+    var dataa = $scope.asgmtresource.get(
+	{id: $scope.assignmentid},function() {
+	    $scope.assignment = dataa.data;
+	    var datat = $scope.taskresource.get(
+		{id: $scope.assignment.taskid}, function() {
+		    $scope.task = datat.data;
+		}
+	    );
+	}
+    );
+
 
 }
 		  );

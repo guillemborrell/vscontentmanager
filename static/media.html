@@ -47,7 +47,16 @@
 	    <tr>
 	      <td>{{ m.name }}</td>
 	      <td>{{ m.when.strftime('%d-%m-%Y') }}</td>
-	      <td><a href="/serve/{{ m.blob }}">Descargar</a></td>
+	      <td><a href="/serve/{{ m.blob }}"><button class="btn btn-info">
+		    Descargar
+		  </button>
+		</a>
+		<button 
+		   class="btn btn-success"
+		   onclick="copyLink('/serve/{{ m.blob }}')">
+		  Copiar enlace
+		</button>
+	      </td>
 	    </tr>
 	    {% endfor %}
 	    <tr>
@@ -67,14 +76,21 @@
 	      </td>
 	      <td>
 		<input type="submit" value="Subir">
-		</form>
+		
 	      </td>
 	    </tr>
-
+	    </form>
 	  </table>
 	</div>
       </div>
     </div>
+
+    <script>
+      function copyLink(link){
+      window.prompt("Copiar al portapapeles: Ctrl+C, Enter", link);
+      }
+    </script>
+
     {% endblock %}
     
     
