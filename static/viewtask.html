@@ -44,20 +44,11 @@
       <div class="container" ng-controller="viewTaskController">
 	<div class="row">
           <div class="col-lg-12">
-	    <h2>Nuevo ejercicio</h2>
-	    <form>
-	      <div class="form-group">
-		<select ng-model="type"
-			ng-options="task for task in available_tasks"
-			class="form-control">
-		  <option value="">Seleccione tipo de ejercicio</option>
-		</select>
-	      </div>
-	    </form>
+	    <h2>Editar ejercicio</h2>
 
 	    <!-- TEST -->
 	    <div ng-if="type == 'Test'">
-	      <h3>Crear test</h3>
+	      <h3>Editar test</h3>
 	      <form>
 		<div class="form-group">
 		  <label>Nombre (menos de 500 caracteres)</label>
@@ -66,7 +57,7 @@
 			 class="form-control">
 		</div>
 		<div style="margin-left:20px;" class="well"
-		     ng-repeat="item in test.question_list track by $index">
+		     ng-repeat="item in test.question_list">
 		  <div class="form-group">
 		    <label>Enunciado (Menos de 500 caracteres)</label>
 		    <input type="text"
@@ -77,7 +68,7 @@
 		       ng-repeat="choice in item.choices track by $index">
 		    <label>{{ $index+1 + '.-' }}</label>
 		    <input type="text"
-			   ng-model="choice"
+			   ng-model="$parent.item.choices[$index]"
 			   class="form-control">
 		  </div>
 		  <button class="btn btn-info"
@@ -101,17 +92,17 @@
 		    Añadir pregunta
 		  </button>
 		</div>
+		<div style="margin-top:20px;">
+		  <button class="btn btn-success"
+			  ng-click="submit_test()">
+		    Editar test.
+		  </button>
+		</div>
 	      </form>
-	      <div style="margin-top:20px;">
-		<button class="btn btn-success"
-			ng-click="submit_test()">
-		  Crear test.
-		</button>
-	      </div>
 	    </div>  
 	    <!-- ACTIVIDAD -->
 	    <div ng-if="type == 'Actividad'">
-	      <h3>Crear actividad</h3>
+	      <h3>Editar actividad</h3>
 	      <form role="form">
 		<div class="form-group">
 		  <label for="name">Nombre</label>
@@ -128,14 +119,14 @@
 		  </textarea>
 		</div>
 		<button class="btn btn-success" ng-click="submit_activity()">
-		  Crear Actividad
+		  Editar Actividad
 		</button>
 	      </form>
 	    </div>
 	    
 	    <!-- PREGUNTA -->
 	    <div ng-if="type == 'Pregunta'">
-	      <h3>Crear pregunta</h3>
+	      <h3>Editar pregunta</h3>
 	      <form role="form">
 		<div class="form-group">
 		  <label for="name">Nombre (menos de 500 caracteres)</label>
@@ -157,7 +148,7 @@
 		</div>
 		<button class="btn btn-success"
 			ng-click="submit_question()">
-		  Crear Pregunta
+		  Editar Pregunta
 		</button>
 	      </form>
 	    </div>

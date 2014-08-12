@@ -94,6 +94,7 @@
       <div class="container">
 	<div class="row">
           <div class="col-lg-12">
+	    {% if page.slug == "home" %}
 	    {% if assignments %}
 	    <div>
 	      <h2>Tareas</h2>
@@ -118,6 +119,7 @@
 		{% endfor %}
 	      </table>
 	    </div>
+	    {% endif %}
 	    {% endif %}
 	    <div class="text-center">
               <h2>{{ page.title }}</h2>

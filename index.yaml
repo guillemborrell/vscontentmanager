@@ -18,6 +18,13 @@ indexes:
 
 - kind: Assignment
   properties:
+  - name: completed
+  - name: user
+  - name: when
+    direction: desc
+
+- kind: Assignment
+  properties:
   - name: user
   - name: when
     direction: desc

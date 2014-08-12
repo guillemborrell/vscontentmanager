@@ -84,7 +84,18 @@
 		    Revisar
 		  </button>
 		</span>
-		<button class="btn btn-danger">Borrar</button>
+		<span ng-if="a.revised == true">
+		  <button 
+		     class="btn btn-success"
+		     ng-click="deleteassignment(a.id)">
+		    Borrar</button>
+		</span>
+		<span ng-if="a.revised != true">
+		  <button 
+		     class="btn btn-danger"
+		     ng-click="deleteassignment(a.id)">
+		    Borrar</button>
+		</span>
 	      </td>
 	    </tr>
 	    {% endraw %}

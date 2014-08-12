@@ -146,11 +146,17 @@ class TaskResource(webapp2.RequestHandler):
         user, logout = check_user(users.get_current_user())
         if user:
             body = json.loads(self.request.body)
-            Task(name = body['name'],
-                 kind = body['kind'],
-                 active = True,
-                 data = body['data']).put()
-
+            print body
+            if self.request.get('id'):
+                task = ndb.Key(urlsafe=self.request.get('id')).get()
+                task.data = body['data']
+                task.put()
+            else:
+                Task(name = body['name'],
+                     kind = body['kind'],
+                     active = True,
+                     data = body['data']).put()
+                
             
     @ndb.transactional
     def delete(self):
@@ -181,7 +187,7 @@ class AssignmentResource(webapp2.RequestHandler):
                     d, curs, more = Assignment.query(
                         Assignment.active == True).order(
                             -Assignment.when).fetch_page(
-                                10, start_cursor=cursor)
+                                100, start_cursor=cursor)
                     for ditem in d:
                         u.append(ditem.to_dict())
                         
@@ -222,8 +228,9 @@ class AssignmentResource(webapp2.RequestHandler):
         if user:
             key = self.request.get('id')
             #even more things here
-            task = ndb.Key(urlsafe=key)
-            task.delete()
+            assignment = ndb.Key(urlsafe=key).get()
+            assignment.active = False
+            assignment.put()
 
 
 class MakeAssignmentResource(webapp2.RequestHandler):
@@ -233,7 +240,14 @@ class MakeAssignmentResource(webapp2.RequestHandler):
         self.response.out.write(
             json.dumps({'data':assignment.to_dict()})
         )
+        assignment.completed = True
+        assignment.put()
 
-
+    @ndb.transactional
     def post(self):
-        pass
+        key = self.request.get('id')
+        assignment = ndb.Key(urlsafe=key).get()
+        body = json.loads(self.request.body)
+        assignment.result = body['data']
+        assignment.put()
+        

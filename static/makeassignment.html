@@ -12,26 +12,24 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/activity" class="navbar-brand">Comm. Protocol Services</a>
+          <div class="navbar-brand">Comm. Protocol Services</div>
 	</div>
 	
 	<!-- Collect the nav links, forms, and other content for toggling -->
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
             <li class="hidden">
-              <a href="#page-top"></a>
             </li>
             <li>
-	      <a href="/app/home">Índice</a>
+		<i class="fa fa-home"></i>
+		Índice
             </li>
             <li>
-	      <a href="/user?id={{ user.key.urlsafe() }}">
 		<i class="fa fa-user"></i>
 		{{ user.name }}
-	      </a>
             </li>	    
             <li>
-	      <a href="/logout">Salir</a>
+	      <a href="#">Salir</a>
             </li>
           </ul>
 	</div>
@@ -47,124 +45,55 @@
       <div class="container" ng-controller="makeAssignmentController">
 	<div class="row">
           <div class="col-lg-12">
-	    <h2>Nuevo ejercicio</h2>
-	    <form>
-	      <div class="form-group">
-		<select ng-model="type"
-			ng-options="task for task in available_tasks"
-			class="form-control">
-		  <option value="">Seleccione tipo de ejercicio</option>
-		</select>
-	      </div>
-	    </form>
-
+	    <h2>{{ results.name }}</h2>
 	    <!-- TEST -->
-	    <div ng-if="type == 'Test'">
-	      <h3>Crear test</h3>
-	      <form>
-		<div class="form-group">
-		  <label>Nombre (menos de 500 caracteres)</label>
-		  <input type="text"
-			 ng-model="test.name"
-			 class="form-control">
-		</div>
-		<div style="margin-left:20px;" class="well"
-		     ng-repeat="item in test.question_list track by $index">
-		  <div class="form-group">
-		    <label>Enunciado (Menos de 500 caracteres)</label>
-		    <input type="text"
-			   ng-model="item.question"
-			   class="form-control">
-		  </div>
-		  <div class="form-group"
-		       ng-repeat="choice in item.choices track by $index">
-		    <label>{{ $index+1 + '.-' }}</label>
-		    <input type="text"
-			   ng-model="choice"
-			   class="form-control">
-		  </div>
-		  <button class="btn btn-info"
-			  ng-click="add_choice_to_question(item.choices)">
-		    Añadir opción
-		  </button>
-		  <button class="btn bgn-danger"
-			  ng-click="remove_choice_from_question(item.choices)">
-		    Quitar opción
-		  </button>
-		  <div class="form-group">
-		    <label>Correcto</label>
-		    <input type="number"
-			   ng-model="item.right"
-			   class="form-control">
-		  </div>
-		</div>
-		<div style="margin-left:20px;">
-		  <button class="btn btn-info"
-			  ng-click="add_question_to_test(test.question_list)">
-		    Añadir pregunta
-		  </button>
-		</div>
-	      </form>
-	      <div style="margin-top:20px;">
-		<button class="btn btn-success"
-			ng-click="submit_test()">
-		  Crear test.
-		</button>
+	    <div ng-if="results.kind == 'Test'">
+	      <div class="form-group"
+		   ng-repeat="question in results.data.question_list track by $index">
+		<form>
+		  <label>
+		    {{ question.question }}
+		    <div>
+		      <radiogroup 
+			 ng-repeat="choice in question.choices track by $index">
+			<input type="radio"  
+			       name="$parent.$index"
+			       ng-model="$parent.question.result"
+			       ng-value="$index+1">
+			{{ choice }} <br />
+		      </radiogroup>
+		      <p>
+			Has marcado la respuesta #{{ question.result }}
+		      </p>
+		    </div>
+		  </label>
+		</form>
 	      </div>
 	    </div>  
 	    <!-- ACTIVIDAD -->
-	    <div ng-if="type == 'Actividad'">
-	      <h3>Crear actividad</h3>
-	      <form role="form">
-		<div class="form-group">
-		  <label for="name">Nombre</label>
-		  <input type="text"
-			 ng-model="activity.name"
-			 class="form-control">
-		</div>
-		<div class="form-group">
-		  <label for="name">Descripción</label>
-		  <textarea rows="5"
-			    class="form-control"
-			    ng-model="activity.description">
-		    {{ activity.description }}
-		  </textarea>
-		</div>
-		<button class="btn btn-success" ng-click="submit_activity()">
-		  Crear Actividad
-		</button>
-	      </form>
+	    <div ng-if="results.kind == 'Actividad'">
+	      <div class="form-group">
+		<label>Actividad: {{ results.name }}</label>
+		<p>{{ results.description }}</p>
+	      </div>
 	    </div>
 	    
 	    <!-- PREGUNTA -->
-	    <div ng-if="type == 'Pregunta'">
-	      <h3>Crear pregunta</h3>
-	      <form role="form">
-		<div class="form-group">
-		  <label for="name">Nombre (menos de 500 caracteres)</label>
-		  <input type="text"
-			 ng-model="question.name"
-			 class="form-control">
-		</div>
-		<div class="form-group">
-		  <label for="name">Pregunta (menos de 500 caracteres)</label>
-		  <input type="text"
-			 ng-model="question.question" 
-			 class="form-control">
-		</div>
-		<div class="form-group">
-		  <label for="name">Respuesta (menos de 500 caracteres)</label>
-		  <input type="text"
-			 ng-model="question.answer"
-			 class="form-control">
-		</div>
-		<button class="btn btn-success"
-			ng-click="submit_question()">
-		  Crear Pregunta
-		</button>
-	      </form>
+	    <div ng-if="results.kind == 'Pregunta'">
+	      <div class="form-group">
+		<label>Pregunta: {{ results.question }}</label>
+		<input
+		   type="text"
+		   ng-model="results.result"
+		   class="form-control">
+	      </div>
 	    </div>
 	  </div>
+	  <button class="btn btn-success"
+		  ng-click="sendAssignment()">
+	    Finalizar
+	  </button>
+
 	</div>
       </div>
     </section>

@@ -145,7 +145,7 @@ taskApp.controller('activityController', function($scope, $resource) {
 					     );
 
     $scope.deletetask = function(task){
-	var ask = confirm("¿Seguro que quieres borrar esta tarea?");
+	var ask = confirm("¿Seguro que quieres borrar este ejercicio?");
 	if (ask){
 	    var data = $scope.taskresource.remove(params={id: task});
 	    window.location.replace('/activity');
@@ -155,8 +155,16 @@ taskApp.controller('activityController', function($scope, $resource) {
     $scope.assigntask = function(task){
 	window.location.replace('/assign?id='+task);
     };
-	
-});
+
+    $scope.deleteassignment = function(assignment){
+	var ask = confirm("Seguro que quieres borrar esta tarea?");
+	if (ask){
+	    var data = $scope.assignmentresource.remove(params={id: assignment});
+	    window.location.replace('/activity');
+	}
+    }
+}
+		  );
 
 taskApp.controller('taskController', function ($scope, $resource) {
     $scope.available_tasks = ['Test','Actividad','Pregunta'];
@@ -219,7 +227,6 @@ taskApp.controller('taskController', function ($scope, $resource) {
 
 taskApp.controller('viewTaskController', function ($scope, $resource) {
     $scope.taskid = getParameterByName('id');
-    console.log($scope.taskid);
     $scope.taskresource = $resource("/REST/task");
     $scope.available_tasks = ['Test','Actividad','Pregunta'];
     $scope.type = "";
@@ -265,7 +272,7 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
     
     
     $scope.submit_question = function (){
-	var data = $scope.taskresource.save(
+	var data = $scope.taskresource.save(params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.question.name,
 	     "data": $scope.question}
@@ -274,7 +281,7 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
     };
     
     $scope.submit_activity = function (){
-	var data = $scope.taskresource.save(
+	var data = $scope.taskresource.save(params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.activity.name,
 	     "data": $scope.activity}
@@ -282,7 +289,7 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
 	window.location.replace('/activity');
     };
     $scope.submit_test = function (){
-	var data = $scope.taskresource.save(
+	var data = $scope.taskresource.save(params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.test.name,
 	     "data": $scope.test}
@@ -299,7 +306,6 @@ taskApp.controller('makeAssignmentController', function ($scope, $resource) {
     $scope.asgmtresource = $resource("/REST/makeassignment");
     $scope.taskresource = $resource("/REST/task");
     $scope.assignment = {};
-    $scope.task = {};
     $scope.results = {};
 
     var dataa = $scope.asgmtresource.get(
@@ -307,12 +313,29 @@ taskApp.controller('makeAssignmentController', function ($scope, $resource) {
 	    $scope.assignment = dataa.data;
 	    var datat = $scope.taskresource.get(
 		{id: $scope.assignment.taskid}, function() {
-		    $scope.task = datat.data;
+		    $scope.results = datat.data;
+		    
+		    if ($scope.results.kind == 'Test'){
+			for (i in $scope.results.data.question_list){
+			    $scope.results.data.question_list[i].result = 1;
+			}
+		    }
+		    if ($scope.results.kind == 'Pregunta'){
+			$scope.results.result = '';
+		    }
 		}
 	    );
 	}
     );
 
+    $scope.sendAssignment = function() {
+	var data = $scope.asgmtresource.save(
+	    params = {id: $scope.assignmentid},
+	    {"data": $scope.results});
 
+	window.location.replace('/app/home');
+    }
 }
 		  );
+
+
