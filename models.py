@@ -118,15 +118,23 @@ class Assignment(ndb.Model):
     active = ndb.BooleanProperty()
 
     def to_dict(self):
+        if self.user.get():
+            userid = self.user.urlsafe()
+            username = self.user.get().name
+        else:
+            userid = ''
+            username = 'Missing'
+
         return {"id": self.key.urlsafe(),
                 "when": self.when.strftime("%b %d %Y %H:%M:%S"),
                 "taskid": self.task.urlsafe(),
                 "task": self.task.get().name,
-                "userid": self.user.urlsafe(),
-                "user": self.user.get().name,
+                "userid": userid,
+                "user": username,
                 "duration_in_minutes": self.duration_in_minutes,
                 "start": self.start.strftime("%b %d %Y %H:%M:%S"),
                 "due": self.due.strftime("%b %d %Y %H:%M:%S"),
                 "completed": self.completed,
                 "active": self.active,
+                "results": self.result,
                 "revised": self.revised}

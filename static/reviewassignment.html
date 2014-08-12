@@ -19,19 +19,13 @@
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
             <li class="hidden">
+              <a href="#page-top"></a>
             </li>
             <li>
-		<i class="fa fa-home"></i>
-		Índice
-            </li>
-            <li>
-		<i class="fa fa-user"></i>
-		{{ user.name }}
+              <a href="{{ logout_url }}">Salir</a>
             </li>	    
-            <li>
-	      <a href="#">Salir</a>
-            </li>
           </ul>
+
 	</div>
 	<!-- /.navbar-collapse -->
       </div>
@@ -42,56 +36,43 @@
     {% block content %}
     {% raw %}
     <section id="services">
-      <div class="container" ng-controller="makeAssignmentController">
+      <div class="container" ng-controller="reviseAssignmentController">
 	<div class="row">
           <div class="col-lg-12">
-	    <h2>{{ results.name }}</h2>
+	    <h2>{{ assignment.results.name }}</h2>
 	    <!-- TEST -->
-	    <div ng-if="results.kind == 'Test'">
-	      <div class="form-group"
-		   ng-repeat="question in results.data.question_list track by $index">
-		<form>
-		  <label>
-		    {{ question.question }}
-		    <div>
-		      <radiogroup 
-			 ng-repeat="choice in question.choices track by $index">
-			<input type="radio"  
-			       name="$parent.$index"
-			       ng-model="$parent.question.result"
-			       ng-value="$index+1">
-			{{ choice }} <br />
-		      </radiogroup>
-		      <p>
-			Has marcado la respuesta #{{ question.result }}
-		      </p>
-		    </div>
-		  </label>
-		</form>
-	      </div>
+	    <div ng-if="assignment.results.kind == 'Test'">
+	      <ol>
+		<li ng-repeat="question in assignment.results.data.question_list track by $index">{{ question.question }}: {{question.right}} /
+		  {{question.result}}
+		  <span ng-if="question.right == question.result">
+		    <i style="color:green;"
+		       class="fa fa-check"></i>
+		  </span>
+		  <span ng-if="question.right != question.result">
+		    <i style="color:red;"
+		       class="fa fa-times"></i>
+		  </span>
+		</li>
+
+	      </ol>
 	    </div>  
 	    <!-- ACTIVIDAD -->
-	    <div ng-if="results.kind == 'Actividad'">
-	      <div class="form-group">
-		<label>Actividad: {{ results.name }}</label>
-		<p>{{ results.description }}</p>
-	      </div>
+	    <div ng-if="assignment.results.kind == 'Actividad'">
+	      <p>Actividad: {{ assignment.results.name }}</p>
+	      <p>{{ assignment.results.data.description }}</p>
 	    </div>
 	    
 	    <!-- PREGUNTA -->
-	    <div ng-if="results.kind == 'Pregunta'">
-	      <div class="form-group">
-		<label>Pregunta: {{ results.data.question }}</label>
-		<input
-		   type="text"
-		   ng-model="results.result"
-		   class="form-control">
-	      </div>
+	    <div ng-if="assignment.results.kind == 'Pregunta'">
+	      <p>Pregunta: {{ assignment.results.data.question }}</p>
+	      <p>Respuesta: {{ assignment.results.result }}</p>
+	      <p>Correcta: {{ assignment.results.data.answer }}</p>
 	    </div>
 	  </div>
 	  <button class="btn btn-success"
-		  ng-click="sendAssignment()">
-	    Finalizar
+		  ng-click="done()">
+	    Aceptar
 	  </button>
 
 	</div>

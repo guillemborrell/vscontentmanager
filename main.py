@@ -452,6 +452,23 @@ class MakeAssignmentPage(webapp2.RequestHandler):
             self.redirect('/login?to={}'.format(slug))
 
 
+class ReviewAssignmentPage(webapp2.RequestHandler):
+    def get(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            template_args = {
+                'logout_url': users.create_logout_url('/')
+            }
+
+            template = JINJA_ENVIRONMENT.get_template('reviewassignment.html')
+            self.response.write(
+                template.render(template_args)
+            )
+
+        else:
+            self.redirect('/login?to={}'.format(slug))
+
+
 
 app = webapp2.WSGIApplication(
     [
@@ -472,6 +489,7 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/task',TaskPage),
         webapp2.Route(r'/viewtask',ViewTaskPage),
         webapp2.Route(r'/makeassignment',MakeAssignmentPage),
+        webapp2.Route(r'/reviewassignment',ReviewAssignmentPage),
         webapp2.Route(r'/REST/user',UserResource),
         webapp2.Route(r'/REST/group',GroupResource),
         webapp2.Route(r'/REST/subscription',SubscriptionResource),

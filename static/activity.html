@@ -80,7 +80,9 @@
 	      <td>{{ a.user }}</td>
 	      <td>
 		<span ng-if="a.completed">
-		  <button class="btn btn-info">
+		  <button 
+		     class="btn btn-info"
+		     ng-click="reviewAssignment(a.id)">
 		    Revisar
 		  </button>
 		</span>

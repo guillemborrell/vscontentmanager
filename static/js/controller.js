@@ -162,7 +162,11 @@ taskApp.controller('activityController', function($scope, $resource) {
 	    var data = $scope.assignmentresource.remove(params={id: assignment});
 	    window.location.replace('/activity');
 	}
-    }
+    };
+
+    $scope.reviewAssignment = function(assignment){
+	window.location.replace('/reviewassignment?id='+assignment);
+    };
 }
 		  );
 
@@ -334,6 +338,25 @@ taskApp.controller('makeAssignmentController', function ($scope, $resource) {
 	    {"data": $scope.results});
 
 	window.location.replace('/app/home');
+    }
+}
+		  );
+
+
+
+taskApp.controller('reviseAssignmentController', function ($scope, $resource) {
+    $scope.assignmentid = getParameterByName('id');
+    $scope.asgmtresource = $resource("/REST/assignment");
+    $scope.assignment = {};
+
+    var dataa = $scope.asgmtresource.get(
+	{id: $scope.assignmentid},function() {
+	    $scope.assignment = dataa.data;
+	}
+    );
+
+    $scope.done = function(){
+	window.location.replace('/activity');
     }
 }
 		  );

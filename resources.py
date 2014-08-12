@@ -174,7 +174,7 @@ class AssignmentResource(webapp2.RequestHandler):
         if user:
             if self.request.get('id'):
                 t = ndb.Key(urlsafe=self.request.get('id')).get()
-                u = [t.to_dict()]
+                u = t.to_dict()
                 t.revised = True
                 t.put()
                 
@@ -241,6 +241,7 @@ class MakeAssignmentResource(webapp2.RequestHandler):
             json.dumps({'data':assignment.to_dict()})
         )
         assignment.completed = True
+        assignment.when = datetime.datetime.now()
         assignment.put()
 
     @ndb.transactional
