@@ -57,7 +57,7 @@
 			 class="form-control">
 		</div>
 		<div style="margin-left:20px;" class="well"
-		     ng-repeat="item in test.question_list">
+		     ng-repeat="item in test.question_list track by $index">
 		  <div class="form-group">
 		    <label>Enunciado (Menos de 500 caracteres)</label>
 		    <input type="text"
