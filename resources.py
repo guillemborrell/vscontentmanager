@@ -146,7 +146,6 @@ class TaskResource(webapp2.RequestHandler):
         user, logout = check_user(users.get_current_user())
         if user:
             body = json.loads(self.request.body)
-            print body
             if self.request.get('id'):
                 task = ndb.Key(urlsafe=self.request.get('id')).get()
                 task.data = body['data']
