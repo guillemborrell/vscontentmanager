@@ -121,7 +121,7 @@
 	    </tr>
 	    {% raw %}
 	    <tr ng-repeat="u in users">
-	      <td>{{ u.name }}</td>
+	      <td><a href="/user?id={{ u.id }}">{{ u.name }}</a></td>
 	      <td>{{ u.password }}</td>
 	      <td>{{ u.subscription }}</td>
 	      <td>{{ u.group }}</td>

@@ -243,6 +243,48 @@ class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
         self.send_blob(blob_info)
 
 
+class UserPage(webapp2.RequestHandler):
+    def get(self):
+        cookie = self.request.cookies.get('CookieProtocolServices')
+        admin, logout = check_user(users.get_current_user())
+
+        if cookie:
+            session = ndb.Key(urlsafe=str(cookie)).get()
+            user = session.key.parent().get()
+
+            assignments = Assignment.query(
+                Assignment.user == user.key,
+                Assignment.completed == False).order(
+                    -Assignment.when).fetch(10)
+
+
+            template = JINJA_ENVIRONMENT.get_template('user.html')
+            self.response.write(template.render(
+                {'auth': False,
+                 'user': user.to_dict(),
+                 'assignments': assignments}))
+
+
+        elif admin:
+            user = ndb.Key(urlsafe=self.request.get('id')).get()
+
+            assignments = Assignment.query(
+                Assignment.user == user.key,
+                Assignment.completed == False).order(
+                    -Assignment.when).fetch(10)
+
+
+            template = JINJA_ENVIRONMENT.get_template('user.html')
+            self.response.write(template.render(
+                {'auth': True,
+                 'user': user.to_dict(),
+                 'assignments': assignments}))
+            
+
+        else:
+            self.redirect('/login?to={}'.format(slug))
+
+
 class LoginPage(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('login.html')
@@ -474,6 +516,7 @@ app = webapp2.WSGIApplication(
     [
         webapp2.Route(r'/',MainPage),
         webapp2.Route(r'/app/<slug:.*>',AppPage),
+        webapp2.Route(r'/user',UserPage),
         webapp2.Route(r'/login',LoginPage),
         webapp2.Route(r'/logout',LogoutPage),
         webapp2.Route(r'/admin',AdminPage),
