@@ -90,7 +90,7 @@
 	      <td>{{ assignment.task.get().kind }} </td>
 	      <td>{{ assignment.due }} </td>
 	      <td>{{ assignment.duration_in_minutes}}</td>
-	      <td><button class="btn"
+	      <td><button class="btn btn-primary"
 			  onclick="window.location.replace('/makeassignment?id={{ assignment.key.urlsafe() }}');">
 		  Completar</button></td>
 	    </tr>
