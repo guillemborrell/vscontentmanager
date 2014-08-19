@@ -65,11 +65,11 @@ taskApp.controller('userController', function($scope, $resource){
 	window.location.replace('/users');
     }
 
-    $scope.deleteUser = function(key){
+    $scope.deleteUser = function(key,idx){
 	var ask = confirm("¿Seguro que queires borrarlo?");
 	if (ask){
 	    var data = $scope.userresource.remove(params={id: key});
-	    window.location.replace('/users');
+	    $scope.users.splice(idx,1);
 	}
     }   
 
