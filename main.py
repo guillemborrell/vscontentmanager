@@ -81,6 +81,7 @@ class AppPage(webapp2.RequestHandler):
             user = session.key.parent().get()
             page = Page.query(Page.slug == slug).get()
             assignments = Assignment.query(
+                Assignment.active == True,
                 Assignment.user == user.key,
                 Assignment.completed == False).order(
                     -Assignment.when).fetch(10)
