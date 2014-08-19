@@ -99,29 +99,12 @@
           <div class="col-lg-12">
 	    {% if page.slug == "home" %}
 	    {% if assignments %}
-	    <div>
-	      <h2>Tareas</h2>
-	      <table class="table table-striped table-bordered">
-		<tr>
-		  <th>Nombre</th>
-		  <th>Tipo</th>
-		  <th>Antes de:</th>
-		  <th>Tiempo máximo en minutos</th>
-		  <th>Acciones</th>
-		</tr>
-		{% for assignment in assignments %}
-		<tr>
-		<td>{{ assignment.task.get().name }}</td> 
-		<td>{{ assignment.task.get().kind }} </td>
-		<td>{{ assignment.due }} </td>
-		<td>{{ assignment.duration_in_minutes}}</td>
-		<td><button class="btn"
-			  onclick="window.location.replace('/makeassignment?id={{ assignment.key.urlsafe() }}');">
-		    Completar</button></td>
-		</tr>
-		{% endfor %}
-	      </table>
-	    </div>
+	    <a href="/user?id={{ user.key.urlsafe() }}">
+	      <button class="btn btn-warning btn-lg">
+		<i class="fa fa-warning"></i>
+		{{ assignments|length }} Tareas pendientes
+	      </button>
+	    </a>
 	    {% endif %}
 	    {% endif %}
 	    <div class="text-center">
