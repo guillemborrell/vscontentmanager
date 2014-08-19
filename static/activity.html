@@ -89,13 +89,13 @@
 		<span ng-if="a.revised == true">
 		  <button 
 		     class="btn btn-success"
-		     ng-click="deleteassignment(a.id)">
+		     ng-click="deleteassignment(a.id,$index)">
 		    Borrar</button>
 		</span>
 		<span ng-if="a.revised != true">
 		  <button 
 		     class="btn btn-danger"
-		     ng-click="deleteassignment(a.id)">
+		     ng-click="deleteassignment(a.id,$index)">
 		    Borrar</button>
 		</span>
 	      </td>

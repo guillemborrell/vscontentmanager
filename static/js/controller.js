@@ -156,11 +156,11 @@ taskApp.controller('activityController', function($scope, $resource) {
 	window.location.replace('/assign?id='+task);
     };
 
-    $scope.deleteassignment = function(assignment){
+    $scope.deleteassignment = function(assignment,idx){
 	var ask = confirm("Seguro que quieres borrar esta tarea?");
 	if (ask){
 	    var data = $scope.assignmentresource.remove(params={id: assignment});
-	    window.location.replace('/activity');
+	    $scope.assignments.splice(idx,1);
 	}
     };
 
