@@ -21,6 +21,7 @@ taskApp.controller('userController', function($scope, $resource){
     $scope.newusergroup = '';
     $scope.newsubscriptionname = '';
     $scope.newgroupname='';
+    $scope.newsubscriptionstartpage = 'home';
     $scope.newsubscriptionlevel = 0;
 
     var datag = $scope.groupresource.get(function(){
@@ -43,6 +44,7 @@ taskApp.controller('userController', function($scope, $resource){
     $scope.postSubscription = function(){
 	var data = $scope.subscriptionresource.save(
 	    {"name": $scope.newsubscriptionname,
+	     "startpage": $scope.newsubscriptionstartpage,
 	     "level": $scope.newsubscriptionlevel}
 	    )
 	window.location.replace('/users');
@@ -171,6 +173,12 @@ taskApp.controller('activityController', function($scope, $resource) {
 		  );
 
 taskApp.controller('taskController', function ($scope, $resource) {
+    $scope.subscriptionresource = $resource('/REST/subscription');
+    $scope.subscription = '';
+    var datas = $scope.subscriptionresource.get(function (){
+	$scope.subscriptions = datas.data;
+    }
+					       );
     $scope.available_tasks = ['Test','Actividad','Pregunta'];
     $scope.type = '';
     $scope.question = {"name": "",
@@ -203,6 +211,7 @@ taskApp.controller('taskController', function ($scope, $resource) {
 	var data = $scope.taskresource.save(
 	    {"kind": $scope.type,
 	     "name": $scope.question.name,
+	     "subscription": $scope.subscription,
 	     "data": $scope.question}
 	);
 	window.location.replace('/activity');
@@ -212,6 +221,7 @@ taskApp.controller('taskController', function ($scope, $resource) {
 	var data = $scope.taskresource.save(
 	    {"kind": $scope.type,
 	     "name": $scope.activity.name,
+	     "subscription": $scope.subscription,
 	     "data": $scope.activity}
 	);
 	window.location.replace('/activity');
@@ -220,6 +230,7 @@ taskApp.controller('taskController', function ($scope, $resource) {
 	var data = $scope.taskresource.save(
 	    {"kind": $scope.type,
 	     "name": $scope.test.name,
+	     "subscription": $scope.subscription,
 	     "data": $scope.test}
 	);
 	window.location.replace('/activity');
@@ -231,6 +242,8 @@ taskApp.controller('taskController', function ($scope, $resource) {
 
 taskApp.controller('viewTaskController', function ($scope, $resource) {
     $scope.taskid = getParameterByName('id');
+    $scope.subscriptionresource = $resource('/REST/subscription');
+    $scope.subscription = '';
     $scope.taskresource = $resource("/REST/task");
     $scope.available_tasks = ['Test','Actividad','Pregunta'];
     $scope.type = "";
@@ -260,7 +273,10 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
 	}
 					}
 				       );
-    
+    var datas = $scope.subscriptionresource.get(function (){
+	$scope.subscriptions = datas.data;
+    }
+					       );    
     $scope.error = false;
     $scope.add_question_to_test = function(question_list){
 	question_list.push({"question": "",
@@ -279,6 +295,7 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
 	var data = $scope.taskresource.save(params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.question.name,
+	     "subscription": $scope.subscription,
 	     "data": $scope.question}
 	);
 	window.location.replace('/activity');
@@ -288,6 +305,7 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
 	var data = $scope.taskresource.save(params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.activity.name,
+	     "subscription": $scope.subscription,
 	     "data": $scope.activity}
 	);
 	window.location.replace('/activity');
@@ -296,6 +314,7 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
 	var data = $scope.taskresource.save(params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.test.name,
+	     "subscription": $scope.subscription,
 	     "data": $scope.test}
 	);
 	window.location.replace('/activity');

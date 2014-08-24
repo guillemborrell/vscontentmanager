@@ -142,9 +142,8 @@ class ContentPage(webapp2.RequestHandler):
                 template_args['title'] = page.title
                 template_args['text'] = process_text_admin(page.text)
                 template_args['edit'] = page.text
-                template_args['subscription'] = Subscription.query(
-                    Subscription.level == page.allowed).get().name
-                template_args['subscriptions'] = Subscription.query().fetch(10)
+                template_args['level'] = page.allowed
+                template_args['startpages'] = set([s.startpage for s in Subscription.query().fetch(10)])
                 template_args['slug'] = page.slug
                 template_args['author'] = user.nickname()
             
@@ -153,7 +152,8 @@ class ContentPage(webapp2.RequestHandler):
                 template_args['title'] = ''
                 template_args['text'] = ''
                 template_args['edit'] = ''
-                template_args['subscriptions'] = Subscription.query().fetch(10)
+                template_args['level'] = 1
+                template_args['startpages'] = set([s.startpage for s in Subscription.query().fetch(10)])
                 template_args['slug'] = slug
                 template_args['author'] = user.nickname()
         
@@ -165,29 +165,23 @@ class ContentPage(webapp2.RequestHandler):
             self.redirect('/admin')
 
     def post(self,slug):
-        page = Page.query(Page.slug == slug).fetch(1)
+        page = Page.query(Page.slug == slug).get()
         if page:
-            subscription = Subscription.query(
-                Subscription.name == self.request.get('subscription')
-            ).get()
-            page = page[0].key.get()
             page.slug = slug
             page.title = self.request.get('title')
             page.text = self.request.get('text')
-            page.allowed = subscription.level
+            page.allowed = int(self.request.get('level'))
             page.put()
 
             self.redirect('/content/{}'.format(slug))
         
         else:
-            subscription = Subscription.query(
-                Subscription.name == self.request.get('subscription')
-            ).get()
             page = Page(title = self.request.get('title'),
                         slug = slug,
                         author = users.get_current_user(),
                         text = self.request.get('text'),
-                        allowed = subscription.level)
+                        allowed = int(self.request.get('level'))
+                    )
             page.put()
         
             self.redirect('/content/{}'.format(slug))
@@ -291,13 +285,12 @@ class LoginPage(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('login.html')
         self.response.write(
-            template.render({'to':self.request.get('to')})
+            template.render({})
         )
 
     def post(self):
         username = self.request.get('user')
         password = self.request.get('password')
-        to = self.request.get('to')
 
         user = User.query(User.name == username,
                           User.password == password).get()
@@ -313,7 +306,7 @@ class LoginPage(webapp2.RequestHandler):
                 session.key.urlsafe(),
                 max_age=32000)
 
-            self.redirect('/app/{}'.format(to))
+            self.redirect('/app/{}'.format(user.subscription.get().startpage))
             
 
         else:

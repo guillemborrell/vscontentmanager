@@ -13,6 +13,14 @@ indexes:
 - kind: Assignment
   properties:
   - name: active
+  - name: completed
+  - name: user
+  - name: when
+    direction: desc
+
+- kind: Assignment
+  properties:
+  - name: active
   - name: when
     direction: desc
 

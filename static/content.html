@@ -39,6 +39,16 @@
     <div class="container" style="margin-top:100px;">
       <div class="row">
         <div class="col-md-12" style="margin-bottom:20px;">
+	  <div class="well">
+	    <h4>Páginas de inicio</h4>
+	    <ul>
+	      {% for s in startpages %}
+	      <li><a href="/content/{{ s }}">
+		  {{ s }}
+	      </a></li>
+	      {% endfor %}
+	    </ul>
+	  </div>
 	  <h2>{{ title }}</h2>
 	  {{ text|safe }}
         </div>
@@ -57,15 +67,15 @@
 		   value="{{ title }}"required>
 	      </div>
 	      <div class="form-group">
-		<label>Suscripción:</label>
-		<input 
-		   type="text" 
-		   name="subscription"
-		   value="{{ subscription }}" required>
-		Válidas:
-		{% for sub in subscriptions %}
-		  {{ sub.name }},
-		{% endfor %}
+		<label>Permisos:</label>
+		<select name="level">
+		  <option value="1" 
+			  {% if level==1 %}selected {% endif %}>
+		    Privado</option>
+		  <option value="0" 
+			  {% if level==0 %}selected {% endif %}>
+		    Público</option>
+		</select>
  	      </div>
 	      <textarea name="text" form="form">{{ edit }}</textarea><br>
 	      <input type="submit" value="Aceptar">

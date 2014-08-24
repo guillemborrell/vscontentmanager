@@ -41,6 +41,7 @@
 	    <tr>
 	      <th>Nombre</th>
 	      <th>Tipo</th>
+	      <th>Curso</th>
 	      <th>Creado en</th>
 	      <th>Acciones</th>
 	    </tr>
@@ -48,6 +49,7 @@
 	    <tr ng-repeat="t in tasks">
 	      <td><a href="/viewtask?id={{ t.id }}">{{ t.name }}</a></td>
 	      <td>{{ t.kind }}</td>
+	      <td>{{ t.subscription }}</td>
 	      <td>{{ t.when }}</td>
 	      <td>
 		<button class="btn btn-danger"
@@ -71,6 +73,8 @@
 	      <th>Tipo</th>
 	      <th>Modificado en</th>
 	      <th>Usuario</th>
+	      <th>Grupo</th>
+	      <th>Curso</th>
 	      <th>Acciones</th>
 	    </tr>
 	    {% raw %}
@@ -78,6 +82,8 @@
 	      <td>{{ a.task }}</td>
 	      <td>{{ a.when }}</td>
 	      <td>{{ a.user }}</td>
+	      <td>{{ a.group }}</td>
+	      <td>{{ a.subscription }}</td>
 	      <td>
 		<span ng-if="a.completed">
 		  <button 

@@ -3,12 +3,14 @@ from google.appengine.ext import ndb, blobstore
 class Subscription(ndb.Model):
     name = ndb.StringProperty()
     level = ndb.IntegerProperty()
+    startpage = ndb.StringProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
 
     def to_dict(self):
         return {"id": self.key.urlsafe(),
                 "name": self.name,
                 "level": self.level,
+                "startpage": self.startpage,
                 "when": self.when.strftime("%b %d %Y %H:%M:%S")}
 
 class Group(ndb.Model):
@@ -94,6 +96,7 @@ class Task(ndb.Model):
     kind = ndb.StringProperty()
     data = ndb.JsonProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
+    subscription = ndb.KeyProperty(kind=Subscription)
     active = ndb.BooleanProperty()
 
     def to_dict(self):
@@ -101,6 +104,7 @@ class Task(ndb.Model):
                 "name": self.name,
                 "kind": self.kind,
                 "data": self.data,
+                "subscription": self.subscription.get().name,
                 "active": self.active,
                 "when": self.when.strftime("%b %d %Y %H:%M:%S")}
 
@@ -118,19 +122,14 @@ class Assignment(ndb.Model):
     active = ndb.BooleanProperty()
 
     def to_dict(self):
-        if self.user.get():
-            userid = self.user.urlsafe()
-            username = self.user.get().name
-        else:
-            userid = ''
-            username = 'Missing'
-
         return {"id": self.key.urlsafe(),
                 "when": self.when.strftime("%b %d %Y %H:%M:%S"),
                 "taskid": self.task.urlsafe(),
                 "task": self.task.get().name,
-                "userid": userid,
-                "user": username,
+                "userid": self.user.urlsafe(),
+                "user": self.user.get().name,
+                "group": self.user.get().group.get().name,
+                "subscription": self.user.get().subscription.get().name,
                 "duration_in_minutes": self.duration_in_minutes,
                 "start": self.start.strftime("%b %d %Y %H:%M:%S"),
                 "due": self.due.strftime("%b %d %Y %H:%M:%S"),

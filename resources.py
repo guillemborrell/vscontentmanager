@@ -54,7 +54,9 @@ class SubscriptionResource(webapp2.RequestHandler):
             more = True
             cursor = None
             while more:
-                d, cursor, more = Subscription.query().order(-Subscription.when).fetch_page(10, start_cursor=cursor)
+                d, cursor, more = Subscription.query().order(
+                    -Subscription.when).fetch_page(
+                        10, start_cursor=cursor)
                 for ditem in d:
                     u.append(ditem.to_dict())
 
@@ -68,6 +70,7 @@ class SubscriptionResource(webapp2.RequestHandler):
         if user:
             body = json.loads(self.request.body)
             Subscription(name = body['name'],
+                         startpage = body['startpage'],
                          level = body['level']).put()
 
 
@@ -148,11 +151,13 @@ class TaskResource(webapp2.RequestHandler):
             body = json.loads(self.request.body)
             if self.request.get('id'):
                 task = ndb.Key(urlsafe=self.request.get('id')).get()
+                task.subscription = ndb.Key(urlsafe=body['subscription'])
                 task.data = body['data']
                 task.put()
             else:
                 Task(name = body['name'],
                      kind = body['kind'],
+                     subscription = ndb.Key(urlsafe=body['subscription']),
                      active = True,
                      data = body['data']).put()
                 

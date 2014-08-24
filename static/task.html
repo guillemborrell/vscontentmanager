@@ -47,6 +47,11 @@
 	    <h2>Nuevo ejercicio</h2>
 	    <form>
 	      <div class="form-group">
+		<select ng-model="subscription"
+			ng-options="s.id as s.name for s in subscriptions"
+			class="form-control">
+		  <option value="">Seleccione el curso.</option>
+		</select>
 		<select ng-model="type"
 			ng-options="task for task in available_tasks"
 			class="form-control">
