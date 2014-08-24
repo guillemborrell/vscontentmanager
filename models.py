@@ -105,6 +105,7 @@ class Task(ndb.Model):
                 "kind": self.kind,
                 "data": self.data,
                 "subscription": self.subscription.get().name,
+                "subscriptionid": self.subscription.urlsafe(),
                 "active": self.active,
                 "when": self.when.strftime("%b %d %Y %H:%M:%S")}
 

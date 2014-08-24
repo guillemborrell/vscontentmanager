@@ -151,6 +151,7 @@ class TaskResource(webapp2.RequestHandler):
             body = json.loads(self.request.body)
             if self.request.get('id'):
                 task = ndb.Key(urlsafe=self.request.get('id')).get()
+                task.name = body['name']
                 task.subscription = ndb.Key(urlsafe=body['subscription'])
                 task.data = body['data']
                 task.put()

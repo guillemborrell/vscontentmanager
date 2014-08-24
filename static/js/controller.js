@@ -1,3 +1,4 @@
+
 var taskApp = angular.module('taskApp', ['ngResource','ui.bootstrap']);
 
 function getParameterByName(name) {
@@ -243,36 +244,25 @@ taskApp.controller('taskController', function ($scope, $resource) {
 taskApp.controller('viewTaskController', function ($scope, $resource) {
     $scope.taskid = getParameterByName('id');
     $scope.subscriptionresource = $resource('/REST/subscription');
-    $scope.subscription = '';
     $scope.taskresource = $resource("/REST/task");
     $scope.available_tasks = ['Test','Actividad','Pregunta'];
-    $scope.type = "";
-    $scope.question = {"name": "",
-		       "question": "",
-		       "answer": ""};
-    $scope.activity = {"name":"",
-		       "description":""};
-    $scope.test = {"name": "",
-		   "question_list": [{"question": "",
-				      "choices": ["1", "2", "3", "4"],
-				      "right": 1}
-				    ]
-		  };
     
-    var datat = $scope.taskresource.get({id: $scope.taskid},
-					function() {
-	$scope.type = datat.data.kind;
-	if ($scope.type == "Test"){
-	    $scope.test = datat.data.data;
+    var datat = $scope.taskresource.get(
+	{id: $scope.taskid},
+	function() {
+	    $scope.type = datat.data.kind;
+            $scope.subscription = datat.data.subscriptionid;
+	    if ($scope.type == "Test"){
+		$scope.test = datat.data.data;
+	    }
+	    if ($scope.type == "Actividad"){
+		$scope.activity = datat.data.data;
+	    }
+	    if ($scope.type == "Pregunta"){
+		$scope.question = datat.data.data;
+	    }
 	}
-	if ($scope.type == "Actividad"){
-	    $scope.activity = datat.data.data;
-	}
-	if ($scope.type == "Pregunta"){
-	    $scope.question = datat.data.data;
-	}
-					}
-				       );
+    );
     var datas = $scope.subscriptionresource.get(function (){
 	$scope.subscriptions = datas.data;
     }
@@ -292,7 +282,8 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
     
     
     $scope.submit_question = function (){
-	var data = $scope.taskresource.save(params={id: $scope.taskid},
+	var data = $scope.taskresource.save(
+	    params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.question.name,
 	     "subscription": $scope.subscription,
@@ -302,7 +293,8 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
     };
     
     $scope.submit_activity = function (){
-	var data = $scope.taskresource.save(params={id: $scope.taskid},
+	var data = $scope.taskresource.save(
+	    params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.activity.name,
 	     "subscription": $scope.subscription,
@@ -311,7 +303,8 @@ taskApp.controller('viewTaskController', function ($scope, $resource) {
 	window.location.replace('/activity');
     };
     $scope.submit_test = function (){
-	var data = $scope.taskresource.save(params={id: $scope.taskid},
+	var data = $scope.taskresource.save(
+	    params={id: $scope.taskid},
 	    {"kind": $scope.type,
 	     "name": $scope.test.name,
 	     "subscription": $scope.subscription,
