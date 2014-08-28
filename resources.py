@@ -9,6 +9,22 @@ from models import Media, Message, Task, Group, Assignment
 
 from utils import check_user, AUTHORIZED_USERS
 
+
+class MessageResource(webapp2.RequestHandler):
+    def post(self):
+        Message(name = self.request.get('name'),
+                email = self.request.get('email'),
+                phone = self.request.get('phone'),
+                message = self.request.get('message')).put()
+
+    def delete(self):
+        user, logout = check_user(users.get_current_user())
+        if user:
+            key = self.request.get('id')
+            u = ndb.Key(urlsafe=key)
+            u.delete()        
+
+
 class UserResource(webapp2.RequestHandler):
     def get(self):
         user, logout = check_user(users.get_current_user())

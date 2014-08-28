@@ -8,6 +8,15 @@ function getParameterByName(name) {
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+taskApp.controller('messageController', function($scope, $resource){
+    $scope.messageresource = $resource('REST/message');
+    $scope.deleteMessage = function (key){
+	var ask = confirm("¿Seguro que queires borrarlo?");
+	if (ask){
+	    var data = $scope.messageresource.remove(params={id: key});
+	}
+    }
+}
 
 taskApp.controller('userController', function($scope, $resource){
     $scope.userresource = $resource('/REST/user');

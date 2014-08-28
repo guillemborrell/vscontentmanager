@@ -12,7 +12,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/" class="navbar-brand">Protocol Services</a>
+          <a href="/" class="navbar-brand">Comm. Protocol Services</a>
 	</div>
 	
 	<!-- Collect the nav links, forms, and other content for toggling -->
@@ -77,29 +77,39 @@
         </div>
       </div>
 
-        <div class="col-md-12" style="margin-bottom:20px;">
-	  <h2>Mensajes</h2>
-	  <table class="table table-striped table-bordered">
-	    <tr>
-	      <th>Nombre</th>
-	      <th>Fecha</th>
-	      <th>Correo</th>
-	      <th>Teléfono</th>
-	      <th>Mensaje</th>
-	    </tr>
-	    {% for m in messages %}
-	    <tr>
-	      <td>{{ m.name }}</td>
-	      <td>{{ m.when.strftime('%d-%m-%Y') }}</td>
-	      <td><a href="mailto:{{ m.email }}?Subject=Mensaje en Comm. Protocol Services" target="_top">
-		  {{ m.email }}</td>
-	      <td>{{ m.phone }}</td>
-	      <td>{{ m.message }}</td>
-	    </tr>
-	    {% endfor %}
-	  </table>
-	</div>
-
+      <div class="col-md-12"
+	   style="margin-bottom:20px;"
+	   ng-controller="adminController">
+	<h2>Mensajes</h2>
+	<table class="table table-striped table-bordered">
+	  <tr>
+	    <th>Nombre</th>
+	    <th>Fecha</th>
+	    <th>Correo</th>
+	    <th>Teléfono</th>
+	    <th>Mensaje</th>
+	    <th>Acción</th>
+	  </tr>
+	  {% for m in messages %}
+	  <tr>
+	    <td>{{ m.name }}</td>
+	    <td>{{ m.when.strftime('%d-%m-%Y') }}</td>
+	    <td><a href="mailto:{{ m.email }}?Subject=Mensaje en Comm. Protocol Services" target="_top">
+		{{ m.email }}</td>
+	    <td>{{ m.phone }}</td>
+	    <td>{{ m.message }}</td>
+	    <td>
+	      <button 
+		 class="btn btn-danger"
+		 ng-click="deleteMessage({{ m.key.urlsafe() }})">
+		Borrar
+	      </button>
+	    </td>
+	  </tr>
+	  {% endfor %}
+	</table>
+      </div>
+      
     </div>
     {% endblock %}
     

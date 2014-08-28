@@ -12,7 +12,7 @@ from models import User, Session, Page, Subscription
 from models import Media, Message, Task, Group, Assignment
 from resources import UserResource, GroupResource, TaskResource
 from resources import AssignmentResource, SubscriptionResource
-from resources import MakeAssignmentResource
+from resources import MakeAssignmentResource, MessageResource
 from utils import check_user, AUTHORIZED_USERS
 
 
@@ -65,12 +65,6 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render({}))
-
-    def post(self):
-        Message(name = self.request.get('name'),
-                email = self.request.get('email'),
-                phone = self.request.get('phone'),
-                message = self.request.get('message')).put()
 
 
 class AppPage(webapp2.RequestHandler):
@@ -528,6 +522,7 @@ app = webapp2.WSGIApplication(
         webapp2.Route(r'/viewtask',ViewTaskPage),
         webapp2.Route(r'/makeassignment',MakeAssignmentPage),
         webapp2.Route(r'/reviewassignment',ReviewAssignmentPage),
+        webapp2.Route(r'/REST/message',MessageResource),
         webapp2.Route(r'/REST/user',UserResource),
         webapp2.Route(r'/REST/group',GroupResource),
         webapp2.Route(r'/REST/subscription',SubscriptionResource),
