@@ -97,11 +97,17 @@
 	    <td><a href="mailto:{{ m.email }}?Subject=Mensaje en Comm. Protocol Services" target="_top">
 		{{ m.email }}</td>
 	    <td>{{ m.phone }}</td>
-	    <td>{{ m.message }}</td>
+	    <td><button 
+		   class="btn btn-primary"
+		   data-toggle="modal"
+		   data-target="#myModal{{ m.key.urlsafe() }}">
+		Ver mensaje
+	      </button>
+	    </td>
 	    <td>
 	      <button 
 		 class="btn btn-danger"
-		 ng-click="deleteMessage({{ m.key.urlsafe() }})">
+		 ng-click="deleteMessage('{{ m.key.urlsafe() }}')">
 		Borrar
 	      </button>
 	    </td>
@@ -109,8 +115,27 @@
 	  {% endfor %}
 	</table>
       </div>
+      <!-- Button trigger modal -->
       
+      <!-- Modal -->
+      {% for m in messages %}
+      <div class="modal fade" id="myModal{{ m.key.urlsafe() }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">{{ m.name }}</h4>
+	    </div>
+	    <div class="modal-body">
+              {{ m.message }}
+	    </div>
+	    <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+	    </div>
+	  </div>
+	</div>
+      </div>
     </div>
+    {% endfor %}
     {% endblock %}
     
     {% block footer %}
