@@ -8,6 +8,21 @@ function getParameterByName(name) {
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+taskApp.controller('appController', function($scope){
+    $scope.breadcrumbs = [];
+    var pathArray = window.location.pathname.split('/');
+    var pagename = pathArray[1];
+    for (i in $scope.breadcrumbs){
+	if ($scope.breadcrumbs[i] == pagename){
+	    $scope.breadcrumbs.splice(i+1,$scope.breadcrumbs.length-i+1);
+	}
+	else{
+	    $scope.breadcrumbs.push(pagename);
+	}
+    }
+}
+		  );
+
 taskApp.controller('adminController', function($scope, $resource){
     $scope.messageresource = $resource('REST/message');
     $scope.deleteMessage = function (key){

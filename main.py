@@ -87,6 +87,7 @@ class AppPage(webapp2.RequestHandler):
                     {'auth': True,
                      'page': page,
                      'user': user,
+                     'homepage': user.subscription.get().startpage,
                      'assignments': assignments,
                      'text': process_text(page.text)}))
             
