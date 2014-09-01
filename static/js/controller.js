@@ -9,7 +9,7 @@ function getParameterByName(name) {
 }
 
 taskApp.controller('appController', function($scope){
-    var breadcrumbs = JSON.parse(localStorage.getItem("vscontentmanager.breadcrumbs"));
+    var breadcrumbs = JSON.parse(localStorage.getItem("protocolservices.breadcrumbs"));
     var match = false;
     if (!breadcrumbs){
 	breadcrumbs = [];
@@ -26,8 +26,9 @@ taskApp.controller('appController', function($scope){
 	breadcrumbs.push(pageName);
     }
     
-    localStorage.setItem("vscontentmanager.breadcrumbs", breadcrumbs);
-    $scope.breadcrumbs = JSON.stringify(breadcrumbs);
+    localStorage.setItem("protocolservices.breadcrumbs",
+			 JSON.stringify(breadcrumbs));
+    $scope.breadcrumbs = breadcrumbs;
 }
 		  );
 
