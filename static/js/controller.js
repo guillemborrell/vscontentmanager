@@ -18,7 +18,7 @@ taskApp.controller('appController', function($scope){
     var pageName = pathArray[2];
     for (i in breadcrumbs){
 	if (breadcrumbs[i] == pageName){
-	    breadcrumbs.splice(i+1,breadcrumbs.length-i+1);
+	    breadcrumbs.splice(i+1,breadcrumbs.length-i-1);
 	    match = true;
 	}
     }
