@@ -11,7 +11,7 @@ function getParameterByName(name) {
 taskApp.controller('appController', function($scope){
     var breadcrumbs = JSON.parse(localStorage.getItem("vscontentmanager.breadcrumbs"));
     var match = false;
-    if (breadcrumbs == "null"){
+    if (!breadcrumbs){
 	breadcrumbs = [];
     }
     var pathArray = window.location.pathname.split('/');
