@@ -97,7 +97,7 @@ class AppPage(webapp2.RequestHandler):
                 
 
         else:
-            self.redirect('/login?to={}'.format(slug))
+            self.redirect('/login')
 
 
 class AdminPage(webapp2.RequestHandler):

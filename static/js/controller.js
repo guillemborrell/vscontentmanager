@@ -10,7 +10,6 @@ function getParameterByName(name) {
 
 taskApp.controller('appController', function($scope){
     var breadcrumbs = JSON.parse(localStorage.getItem("protocolservices.breadcrumbs"));
-    var match = false;
     if (!breadcrumbs){
 	breadcrumbs = [];
     }
@@ -18,17 +17,21 @@ taskApp.controller('appController', function($scope){
     var pageName = pathArray[2];
     for (i in breadcrumbs){
 	if (breadcrumbs[i] == pageName){
-	    breadcrumbs.splice(i+1,breadcrumbs.length-i-1);
+	    breadcrumbs.splice(i,breadcrumbs.length-i);
+	    console.log(i);
 	    match = true;
 	}
     }
-    if (! match){
-	breadcrumbs.push(pageName);
-    }
-    
+    breadcrumbs.push(pageName);
+        
     localStorage.setItem("protocolservices.breadcrumbs",
 			 JSON.stringify(breadcrumbs));
+    console.log(breadcrumbs);
     $scope.breadcrumbs = breadcrumbs;
+    $scope.logOut = function(){
+	localStorage.setItem("protocolservices.breadcrumbs",JSON.stringify([]));
+	window.location.replace('/');
+    }
 }
 		  );
 
