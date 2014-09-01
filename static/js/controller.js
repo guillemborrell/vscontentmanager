@@ -10,16 +10,22 @@ function getParameterByName(name) {
 
 taskApp.controller('appController', function($scope){
     var breadcrumbs = localStorage.getItem("breadcrumbs");
+    var match = false;
+    if (! breadcrumbs){
+	breadcrumbs = [];
+    }
     var pathArray = window.location.pathname.split('/');
     var pagename = pathArray[1];
     for (i in breadcrumbs){
 	if (breadcrumbs[i] == pagename){
 	    breadcrumbs.splice(i+1,breadcrumbs.length-i+1);
-	}
-	else{
-	    breadcrumbs.push(pagename);
+	    match = true;
 	}
     }
+    if (! match){
+	breadcrumbs.push(pagename);
+    }
+    
     localStorage.setItem("breadcrumbs", breadcrumbs);
     $scope.breadcrumbs = breadcrumbs;
 }
