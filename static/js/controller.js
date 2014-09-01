@@ -9,17 +9,19 @@ function getParameterByName(name) {
 }
 
 taskApp.controller('appController', function($scope){
-    $scope.breadcrumbs = [];
+    var breadcrumbs = localStorage.getItem("breadcrumbs");
     var pathArray = window.location.pathname.split('/');
     var pagename = pathArray[1];
-    for (i in $scope.breadcrumbs){
-	if ($scope.breadcrumbs[i] == pagename){
-	    $scope.breadcrumbs.splice(i+1,$scope.breadcrumbs.length-i+1);
+    for (i in breadcrumbs){
+	if (breadcrumbs[i] == pagename){
+	    breadcrumbs.splice(i+1,breadcrumbs.length-i+1);
 	}
 	else{
-	    $scope.breadcrumbs.push(pagename);
+	    breadcrumbs.push(pagename);
 	}
     }
+    localStorage.setItem("breadcrumbs", breadcrumbs);
+    $scope.breadcrumbs = breadcrumbs;
 }
 		  );
 
