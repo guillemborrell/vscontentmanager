@@ -33,6 +33,7 @@ taskApp.controller('appController', function($scope){
     
     $scope.logOut = function(){
 	localStorage.setItem("protocolservices.breadcrumbs",JSON.stringify([]));
+	document.cookie = "CookieProtocolServices = null; expires=Thu, 2 Aug 2001 20:47:11 UTC; path=/";
 	window.location.replace('/');
     }
 }
