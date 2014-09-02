@@ -99,21 +99,25 @@
           <div class="col-lg-12">
 	    {% if page.slug == homepage %}
 	    {% if assignments %}
-	    <a href="/user?id={{ user.key.urlsafe() }}">
-	      <button class="btn btn-warning btn-lg">
-		<i class="fa fa-warning"></i>
-		{{ assignments|length }} Tareas pendientes
-	      </button>
-	    </a>
+	    <div class="container">
+	      <a href="/user?id={{ user.key.urlsafe() }}">
+	        <button class="btn btn-warning btn-lg">
+		  <i class="fa fa-warning"></i>
+		  {{ assignments|length }} Tareas pendientes
+	        </button>
+	      </a>
+	    </div>
 	    {% endif %}
 	    {% endif %}
 	    {% raw %}
-	    <ol class="breadcrumb">
-	      <li><a></a href="/app/{{ home }}"><i class="fa fa-home"></i></a></li>
-	      <li ng-repeat="b in breadcrumbs">
-		<a href="/app/{{ b }}">{{ b }}</a>
-	      </li>
-	    </ol>
+	    <div class="container">
+	      <ol class="breadcrumb">
+	        <li><a href="/app/{{ home }}"><i class="fa fa-home"></i></a></li>
+	        <li ng-repeat="b in breadcrumbs">
+	  	  <a href="/app/{{ b }}">{{ b }}</a>
+	        </li>
+	      </ol>
+	    </div>
 	    {% endraw %}
 	    <div class="text-center">
               <h2>{{ page.title }}</h2>
