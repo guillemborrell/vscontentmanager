@@ -9,34 +9,34 @@ function getParameterByName(name) {
 }
 
 taskApp.controller('appController', function($scope){
-
+    
     var pathArray = window.location.pathname.split('/');
     if (pathArray[1] == "app"){
     	var breadcrumbs = JSON.parse(localStorage.getItem("protocolservices.breadcrumbs"));
     	if (!breadcrumbs){
-		breadcrumbs = [];
+	    breadcrumbs = [];
     	}
-      var pageName = pathArray[2];
-      for (i in breadcrumbs){
-  	  if (breadcrumbs[i] == pageName){
-	      breadcrumbs.splice(i,breadcrumbs.length-i);
-	  }
-      }
-      breadcrumbs.push(pageName);
+	var pageName = pathArray[2];
+	for (i in breadcrumbs){
+  	    if (breadcrumbs[i] == pageName){
+		breadcrumbs.splice(i,breadcrumbs.length-i);
+	    }
+	}
+	breadcrumbs.push(pageName);
         
-      localStorage.setItem("protocolservices.breadcrumbs",
-			   JSON.stringify(breadcrumbs));
-
-      $scope.home = breadcrumbs[0];
-      $scope.breadcrumbs = breadcrumbs;
-      $scope.breadcrumbs.splice(0,1);
+	localStorage.setItem("protocolservices.breadcrumbs",
+			     JSON.stringify(breadcrumbs));
+	
+	$scope.home = breadcrumbs[0];
+	$scope.breadcrumbs = breadcrumbs;
+	$scope.breadcrumbs.splice(0,1);
     }
     
     $scope.logOut = function(){
 	localStorage.setItem("protocolservices.breadcrumbs",JSON.stringify([]));
 	document.cookie = "CookieProtocolServices = null; expires=Thu, 2 Aug 2001 20:47:11 UTC; path=/";
 	window.location.replace('/');
-	}
+    }
 }
 		  );
 
