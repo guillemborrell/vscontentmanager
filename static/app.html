@@ -100,12 +100,14 @@
 	    {% if page.slug == homepage %}
 	    {% if assignments %}
 	    <div class="container">
-	      <a href="/user?id={{ user.key.urlsafe() }}">
-	        <button class="btn btn-warning btn-lg">
-		  <i class="fa fa-warning"></i>
-		  {{ assignments|length }} Tareas pendientes
-	        </button>
-	      </a>
+	      <p>
+	        <a href="/user?id={{ user.key.urlsafe() }}">
+	          <button class="btn btn-warning btn-lg">
+		    <i class="fa fa-warning"></i>
+		    {{ assignments|length }} Tareas pendientes
+	          </button>
+	        </a>
+	      </p>
 	    </div>
 	    {% endif %}
 	    {% endif %}
