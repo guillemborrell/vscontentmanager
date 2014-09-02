@@ -27,7 +27,10 @@ taskApp.controller('appController', function($scope){
     localStorage.setItem("protocolservices.breadcrumbs",
 			 JSON.stringify(breadcrumbs));
     console.log(breadcrumbs);
+    $scope.home = breadcrumbs[0];
     $scope.breadcrumbs = breadcrumbs;
+    $scope.breadcrumbs.splice(0,1);
+    
     $scope.logOut = function(){
 	localStorage.setItem("protocolservices.breadcrumbs",JSON.stringify([]));
 	window.location.replace('/');
