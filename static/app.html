@@ -114,17 +114,65 @@
 	    {% raw %}
 	    <div class="container">
 	      <ol class="breadcrumb">
-	        <li><a href="/app/{{ home }}"><i class="fa fa-home"></i></a></li>
+	        <li>
+		  Navegación: &nbsp; <a href="/app/{{ home }}"><i class="fa
+		  fa-home"></i></a>
+		</li>
 	        <li ng-repeat="b in breadcrumbs">
 	  	  <a href="/app/{{ b }}">{{ b }}</a>
 	        </li>
 	      </ol>
 	    </div>
 	    {% endraw %}
+	    <nav>
+	      <ul class="pager">
+		{% if page.prev %}
+		<li class="previous">
+		  <a href="/app/{{ page.prev }}">
+		    <span aria-hidden="true">&larr;</span> Anterior
+		  </a>
+		</li>
+		{% endif %}
+		{% if page.next %}
+		<li class="next">
+		  <a href="/app/{{ page.next }}">
+		    Siguiente <span aria-hidden="true">&rarr;</span>
+		  </a>
+		</li>
+		{% endif %}
+	      </ul>
+	    </nav>
 	    <div class="text-center">
               <h2>{{ page.title }}</h2>
 	    </div>
+	    {% if page.doc %}
+	    <div class="container">
+	      <a href="{{ page.doc }}" target="_blank">
+		<button class="btn btn-default">
+		  Descargar el documento adjunto
+		</button>
+	      </a><br /></br />
+	    </div>
+	    {% endif %}
 	    {{ text|safe }}
+	    <nav>
+	      <ul class="pager">
+		{% if page.prev %}
+		<li class="previous">
+		  <a href="/app/{{ page.prev }}">
+		    <span aria-hidden="true">&larr;</span> Anterior
+		  </a>
+		</li>
+		{% endif %}
+		{% if page.next %}
+		<li class="next">
+		  <a href="/app/{{ page.next }}">
+		    Siguiente <span aria-hidden="true">&rarr;</span>
+		  </a>
+		</li>
+	      {% endif %}
+	      </ul>
+	    </nav>
 	  </div>
 	</div>
       </div>

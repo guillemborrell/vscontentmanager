@@ -61,6 +61,13 @@ def process_text_admin(text):
     return newtext.format(*replacements)
 
 
+def nonize(text):
+    if text == None:
+        return ''
+    else:
+        return text
+
+
 class MainPage(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('index.html')
@@ -137,6 +144,9 @@ class ContentPage(webapp2.RequestHandler):
                 template_args['title'] = page.title
                 template_args['text'] = process_text_admin(page.text)
                 template_args['edit'] = page.text
+                template_args['prev'] = nonize(page.prev)
+                template_args['next'] = nonize(page.next)
+                template_args['doc']  = nonize(page.doc)
                 template_args['level'] = page.allowed
                 template_args['startpages'] = set([s.startpage for s in Subscription.query().fetch(10)])
                 template_args['slug'] = page.slug
@@ -147,6 +157,9 @@ class ContentPage(webapp2.RequestHandler):
                 template_args['title'] = ''
                 template_args['text'] = ''
                 template_args['edit'] = ''
+                template_args['prev'] = ''
+                template_args['next'] = ''
+                template_args['doc']  = ''
                 template_args['level'] = 1
                 template_args['startpages'] = set([s.startpage for s in Subscription.query().fetch(10)])
                 template_args['slug'] = slug
@@ -165,6 +178,9 @@ class ContentPage(webapp2.RequestHandler):
             page.slug = slug
             page.title = self.request.get('title')
             page.text = self.request.get('text')
+            page.prev = self.request.get('prev')
+            page.next = self.request.get('next')
+            page.doc  = self.request.get('doc')
             page.allowed = int(self.request.get('level'))
             page.put()
 
@@ -175,6 +191,9 @@ class ContentPage(webapp2.RequestHandler):
                         slug = slug,
                         author = users.get_current_user(),
                         text = self.request.get('text'),
+                        prev = self.request.get('prev'),
+                        next = self.request.get('next'),
+                        doc = self.request.get('doc'),
                         allowed = int(self.request.get('level'))
                     )
             page.put()

@@ -54,7 +54,10 @@ class Session(ndb.Model):
 class Page(ndb.Model):
     title = ndb.StringProperty()
     slug = ndb.StringProperty()
+    doc = ndb.TextProperty()
     text = ndb.TextProperty()
+    prev = ndb.TextProperty()
+    next = ndb.TextProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
     author = ndb.UserProperty()
     allowed = ndb.IntegerProperty()
@@ -62,6 +65,9 @@ class Page(ndb.Model):
     def to_dict(self):
         return {"id": self.key.urlsafe(),
                 "title": self.title,
+                "prev": self.prev,
+                "next": self.next,
+                "doc" : self.doc,
                 "slug": self.slug,
                 "text": self.text,
                 "when": self.when.strftime("%b %d %Y %H:%M:%S"),
