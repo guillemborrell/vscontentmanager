@@ -30,6 +30,8 @@ taskApp.controller('appController', function($scope){
 	$scope.home = breadcrumbs[0];
 	$scope.breadcrumbs = breadcrumbs;
 	$scope.breadcrumbs.splice(0,1);
+	$scope.courses=false;
+	$scope.edit=false;
     }
     
     $scope.logOut = function(){

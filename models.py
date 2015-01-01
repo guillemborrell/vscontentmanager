@@ -55,6 +55,8 @@ class Page(ndb.Model):
     title = ndb.StringProperty()
     slug = ndb.StringProperty()
     text = ndb.TextProperty()
+    prev = ndb.TextProperty()
+    next = ndb.TextProperty()
     when = ndb.DateTimeProperty(auto_now_add = True)
     author = ndb.UserProperty()
     allowed = ndb.IntegerProperty()
