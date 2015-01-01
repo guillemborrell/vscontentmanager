@@ -64,11 +64,13 @@
 		<input 
 		   type="text" 
 		   name="title"
+		   class="form-control"
 		   value="{{ title }}"required>
 	      </div>
 	      <div class="form-group">
 		<label>Permisos:</label>
-		<select name="level">
+		<select name="level"
+			class="form-control">
 		  <option value="1" 
 			  {% if level==1 %}selected {% endif %}>
 		    Privado</option>
@@ -78,7 +80,9 @@
 		</select>
  	      </div>
 	      <textarea name="text" form="form">{{ edit }}</textarea><br>
-	      <input type="submit" value="Aceptar">
+	      <input type="submit"
+		     value="Aceptar"
+		     class="btn">
 	    </form>
 	  </div>
 	</div>
