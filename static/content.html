@@ -74,14 +74,30 @@
 		    Público</option>
 		</select>
  	      </div>
-	      <div class="form-group">
+	      <div class="form-group" 
+		   data-toggle="tooltip"
+		   data-placement="top"
+		   title="Cortar y pegar el enlace en la sección de multimedia">
+		<label >Documento a mostrar (opcional):</label>
+		<input 
+		   type="text"
+		   name="doc"
+		   value="{{ doc }}">
+	      </div>
+	      <div class="form-group"
+		   data-toggle="tooltip"
+		   data-placement="top"
+		   title="Sólo el nombre corto de la página">
 		<label>Página anterior (opcional):</label>
 		<input 
 		   type="text" 
 		   name="prev"
 		   value="{{ prev }}">
 	      </div>
-	      <div class="form-group">
+	      <div class="form-group"
+		   data-toggle="tooltip"
+		   data-placement="top"
+		   title="Sólo el nombre corto de la página">
 		<label>Página siguiente (opcional):</label>
 		<input 
 		   type="text" 

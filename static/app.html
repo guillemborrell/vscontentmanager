@@ -145,6 +145,15 @@
 	    <div class="text-center">
               <h2>{{ page.title }}</h2>
 	    </div>
+	    {% if page.doc %}
+	    <div class="container">
+	      <a href="{{ page.doc }}" target="_blank">
+		<button class="btn btn-default">
+		  Descargar el documento adjunto
+		</button>
+	      </a><br /></br />
+	    </div>
+	    {% endif %}
 	    {{ text|safe }}
 	    <nav>
 	      <ul class="pager">
